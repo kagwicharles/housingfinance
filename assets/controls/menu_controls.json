@@ -1,0 +1,53 @@
+[
+  {
+    "Status":"000",
+    "Message":"Have you put on your mask today?",
+    "Modules":[
+      {
+        "ModuleID":"MAIN",
+        "ModuleName":"Send Money",
+        "ParentModule": "MAIN",
+        "ModuleCategory": "BLOCK",
+        "ModuleURL": "https://uat.craftsilicon.com/Image/Mupeci/sendmoney.png",
+        "MerchantID":"",
+        "DisplayOrder":1.0,
+        "IsDisabled":false,
+        "IsOtpRequired":false,
+        "IsMainMenu":false,
+        "IsHidden":false,
+        "LanguageID":"FRE",
+        "BlockAspectRatio":0.8
+      },
+      {
+        "ModuleID":"MAIN",
+        "ModuleName":"DSTV",
+        "ParentModule":"PRODUCTS",
+        "ModuleCategory":"MAIN",
+        "ModuleURL":"https//uat.craftsilicon.com/image/CentenaryApp/V2_3/Icons_DSTV.png",
+        "MerchantID":"007001040",
+        "DisplayOrder":1.0,
+        "IsDisabled":false,
+        "IsOtpRequired":false,
+        "IsMainMenu":false,
+        "IsHidden":false,
+        "LanguageID":"FRE",
+        "BlockAspectRatio":0.8
+      },
+      {
+        "ModuleID":"MAIN",
+        "ModuleName":"Mini relevé",
+        "ParentModule":"TRANSACTIONHISTORY",
+        "ModuleCategory":"MAIN",
+        "ModuleURL":"https//uat.craftsilicon.com/image/CentenaryApp/V2_3/Icons_DSTV.png",
+        "MerchantID":"MINISTATEMENT",
+        "DisplayOrder":1.0,
+        "IsOtpRequired":false,
+        "IsMainMenu":false,
+        "IsHidden":false,
+        "LanguageID":"FRE",
+        "BlockAspectRatio":0.8
+      }
+
+    ]
+  }
+]

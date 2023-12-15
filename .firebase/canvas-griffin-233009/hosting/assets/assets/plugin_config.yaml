@@ -1,0 +1,21 @@
+# This configuration file is necessary for constants used
+#  in the DynamicCraftPlugin
+
+urls:
+  test: true
+  uat: https://uat.craftsilicon.com 
+  live: NOLIVE
+  tokenUrl: /ElmaAuthDynamicV3/api/auth/app #/ElmaV4Auth/api/auth/apps
+
+request:
+  trxSource: APP
+  bankId: "23"
+  appName: HFBUG
+  country: UGANDATEST
+  bankCustomerID: "25100002"
+  countryCode: "251"
+
+appProperties:
+  appLabel: HFBUG
+  appPrimaryColor: 72CC39
+  appSecondaryColor: F6D703

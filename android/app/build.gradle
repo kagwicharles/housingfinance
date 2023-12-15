@@ -1,0 +1,124 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+apply plugin: "com.android.application"
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    namespace 'com.craftsilicon.hfbbank'
+    compileSdkVersion 34
+    ndkVersion flutter.ndkVersion
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['lib']
+        }
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId "com.craftsilicon.hfbbank"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+        minSdkVersion 26
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation (files("lib/iceberg_ocr_v8.aar"))
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    implementation ("org.greenrobot:eventbus:3.0.0")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    def lifecycle_version = "2.6.2"
+    implementation group: 'androidx.lifecycle', name: 'lifecycle-runtime-ktx', version: "$lifecycle_version"
+    implementation group: 'androidx.lifecycle', name: 'lifecycle-viewmodel-ktx', version: "$lifecycle_version"
+    implementation group: 'androidx.lifecycle', name: 'lifecycle-livedata-ktx', version: "$lifecycle_version"
+    implementation group: 'androidx.lifecycle', name: 'lifecycle-runtime-ktx', version: "$lifecycle_version"
+    implementation group: 'androidx.lifecycle', name: 'lifecycle-common', version: "$lifecycle_version"
+    //noinspection KtxExtensionAvailable
+    implementation group: 'androidx.lifecycle', name: 'lifecycle-reactivestreams', version: "$lifecycle_version"
+    implementation group: 'androidx.lifecycle', name: 'lifecycle-reactivestreams-ktx', version: "$lifecycle_version"
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:19.0.0'
+    implementation 'com.google.android.gms:play-services-mlkit-face-detection:17.1.0'
+    def camerax_version = "1.4.0-alpha02"
+    implementation("androidx.camera:camera-core:${camerax_version}")
+    implementation("androidx.camera:camera-camera2:${camerax_version}")
+    implementation("androidx.camera:camera-lifecycle:${camerax_version}")
+    implementation("androidx.camera:camera-video:${camerax_version}")
+    implementation("androidx.camera:camera-view:${camerax_version}")
+    implementation("androidx.camera:camera-mlkit-vision:${camerax_version}")
+    implementation("androidx.camera:camera-extensions:${camerax_version}")
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:19.0.0'
+    implementation 'com.google.android.gms:play-services-base:18.2.0'
+
+    implementation 'com.google.android.gms:play-services-mlkit-face-detection:17.1.0'
+    implementation 'com.google.android.gms:play-services-tflite-java:16.1.0'
+
+    implementation 'com.karumi:dexter:6.2.3'
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+//    def tf_lite_version = '2.2.0'
+//    implementation "org.tensorflow:tensorflow-lite:$tf_lite_version"
+//    implementation "org.tensorflow:tensorflow-lite-gpu:$tf_lite_version"
+//    implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
+}
+
+
+
+
+
