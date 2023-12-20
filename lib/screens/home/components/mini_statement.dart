@@ -30,7 +30,7 @@ class _MinistatementState extends State<Ministatement> {
       if (value?.status == StatusCode.success.statusCode) {
         Navigator.of(context).push(MaterialPageRoute(
             builder: ((context) =>
-                Statement(ministatement: value?.dynamicList))));
+                Statement(ministatement: value?.accountStatement))));
       } else {
         AlertUtil.showAlertDialog(context, value?.message ?? "Error");
       }
@@ -450,7 +450,7 @@ class _Statement extends State<Statement> {
                       const SizedBox(
                         height: 8,
                       ),
-                      Text(transactionList[index].amount,
+                      Text(transactionList[index].amount.toString(),
                           style: const TextStyle(fontWeight: FontWeight.bold))
                     ],
                   )
@@ -471,7 +471,7 @@ class _Statement extends State<Statement> {
 
 class Transaction {
   String date;
-  String amount;
+  double amount;
 
   Transaction({required this.date, required this.amount});
 

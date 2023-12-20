@@ -20,8 +20,8 @@ request:
 
 appProperties:
   appLabel: HFBUG
-  appPrimaryColor: 72CC39
-  appSecondaryColor: F6D703
+  appPrimaryColor: 2532A1
+  appSecondaryColor: F6B700
 
 #  urls:
 #    test: true

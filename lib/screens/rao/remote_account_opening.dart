@@ -17,27 +17,14 @@ class RAO extends StatefulWidget {
 class _RAOState extends State<RAO> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  String platformVersion = 'Unknown';
 
 
-  Future<void> _getPlatformVersion() async {
-    String? version;
-    try {
-      version = await NativeBridge.getPlatformVersion();
-    } catch (e) {
-      version = 'Failed to get platform version.';
-    }
 
-    if (!mounted) return;
 
-    setState(() {
-      platformVersion = version!;
-    });
-  }
 
   @override
   void initState() {
-    _getPlatformVersion();
+    // _getPlatformVersion();
     // TODO: implement igetnitState
     super.initState();
   }
@@ -65,6 +52,7 @@ class _RAOState extends State<RAO> {
               controller: _pageController,
               children: [
                 Reach(),
+
                 IdentificationDocuments(),
                 NextOfKin(),
                 Income(),
@@ -72,7 +60,7 @@ class _RAOState extends State<RAO> {
                 Container(
                   color: Colors.red,
                   child: Center(
-                    child: Text('Platform Version: $platformVersion'),
+                    // child: Text('Platform Version: $platformVersion'),
                   ),
                 ),
               ],

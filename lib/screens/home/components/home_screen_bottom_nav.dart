@@ -8,6 +8,7 @@ import 'package:hfbbank/screens/home/headers/drawer.dart';
 import 'package:hfbbank/screens/home/headers/header_section.dart';
 import 'package:hfbbank/screens/home/home_web/home.dart';
 import 'package:hfbbank/theme/theme.dart';
+import 'package:hfbbank/util/utils.dart';
 import 'package:pinput/pinput.dart';
 
 import '../headers/card.dart';
@@ -25,10 +26,11 @@ class _HomeBottomNavState extends State<HomeBottomNav> {
   var firstName;
   final _prefs = CommonSharedPref();
 
-
-  getName()async{
-    firstName = await CommonSharedPref().getUserData(UserAccountData.FirstName.name);
+  getName() async {
+    firstName =
+        await CommonSharedPref().getUserData(UserAccountData.FirstName.name);
   }
+
   List<BankAccount> accounts = [
     BankAccount(
         bankAccountId: "bankAccountId",
@@ -40,11 +42,11 @@ class _HomeBottomNavState extends State<HomeBottomNav> {
         defaultAccount: true)
   ];
   @override
-  void initState() { getName();
+  void initState() {
+    getName();
     // TODO: implement initState
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +55,7 @@ class _HomeBottomNavState extends State<HomeBottomNav> {
     final isDesktop = MediaQuery.of(context).size.width > 600;
 
     return isDesktop
-        ? HomeSideMenu()
+        ? const HomeSideMenu()
         : Scaffold(
             drawer: mainDrawer(context),
             backgroundColor: primaryColor,
@@ -63,10 +65,10 @@ class _HomeBottomNavState extends State<HomeBottomNav> {
                 height: 20,
               ),
 
-              Container(
+              SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: Column(children: [
-                     HeaderSectionApp(header: 'Good Morning'),
+                    HeaderSectionApp(header: Util.getGreeting()),
                     ClipRRect(
                       borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(30),
@@ -87,13 +89,8 @@ class _HomeBottomNavState extends State<HomeBottomNav> {
                                     const EdgeInsets.only(left: 20, bottom: 20),
                                 width: MediaQuery.of(context).size.width * 0.75,
                                 child: const AccBalance()),
-                            Container(
-                              height: 200,
-                              child:
-                                 GlassmorphismCreditCard())
-
-                      ,
-
+                            const SizedBox(
+                                height: 200, child: GlassmorphismCreditCard()),
                             const AdvertSection(),
                             const Padding(
                                 padding:

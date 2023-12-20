@@ -10,6 +10,7 @@ import 'package:hfbbank/screens/home/components/advert_section.dart';
 import 'package:hfbbank/screens/home/headers/drawer.dart';
 import 'package:hfbbank/screens/rao/remote_account_opening.dart';
 import 'package:hfbbank/theme/theme.dart';
+import 'package:hfbbank/util/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 
@@ -90,16 +91,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 padding:
                                     const EdgeInsets.only(left: 24, top: 24),
                                 child: Text(
-                                  "Good Morning!",
+                                  Util.getGreeting(),
                                   style: TextStyle(
                                       fontSize: 22, color: Colors.grey[600]),
                                   softWrap: true,
                                 )),
                             Padding(
-                                padding: EdgeInsets.only(left: 24),
+                                padding: const EdgeInsets.only(left: 24),
                                 child: Text(
                                   "${firstName ?? ""}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold),
                                 )),
@@ -142,7 +143,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                             Column(
                                               children: [
                                                 TopDashItem(
-                                                  ontap: (){Get.to(()=>RAO());},
+                                                    ontap: () {
+                                                      Get.to(() => const RAO());
+                                                    },
                                                     image:
                                                         "assets/images/forex.png",
                                                     color: Colors.white),

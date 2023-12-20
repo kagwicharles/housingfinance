@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hfbbank/screens/home/headers/header_section.dart';
 
+import '../bridge.dart';
+
 class Reach extends StatefulWidget {
   const Reach({super.key});
 
@@ -15,6 +17,7 @@ class _ReachState extends State<Reach> {
   TextEditingController _altPhoneController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
   TextEditingController _countyController = TextEditingController();
+  String platformVersion = 'Unknown';
 
   @override
   Widget build(BuildContext context) {
@@ -96,12 +99,29 @@ class _ReachState extends State<Reach> {
                   )),
               SizedBox(height: 10,),
               ElevatedButton(onPressed: () {
-                if(_formKey.currentState!.validate()){
+                // if(_formKey.currentState!.validate()){
+                  _getPlatformVersion();
 
-                }
+
+
+                // }
               }, child: Text('Next'))
             ]),
           ),
         ));
+  }
+  Future<void> _getPlatformVersion() async {
+    String? version;
+    try {
+      version = await NativeBridge.getPlatformVersion();
+    } catch (e) {
+      version = 'Failed to get platform version.';
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      platformVersion = version!;
+    });
   }
 }
