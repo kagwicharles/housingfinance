@@ -3,14 +3,17 @@ import 'dart:convert';
 import 'package:craft_dynamic/craft_dynamic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hfbbank/screens/auth/login_screen.dart';
-import 'package:hfbbank/screens/home/home_screen.dart';
 import 'package:pinput/pinput.dart';
+
+import '../../theme/theme.dart';
 
 class OTPScreen extends StatefulWidget {
   final mobile;
+  final bool isSkyBlueTheme;
 
-  const OTPScreen({super.key, this.mobile});
+  const OTPScreen({super.key, this.mobile, required this.isSkyBlueTheme});
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
@@ -18,6 +21,7 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   final _authRepository = AuthRepository();
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -25,75 +29,121 @@ class _OTPScreenState extends State<OTPScreen> {
     super.initState();
   }
 
+  // AppSignature: lIiFU8i6azu
+
+  @override
+  void dispose() {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    super.dispose();
+  }
+
   final _formKey = GlobalKey<FormState>();
   TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final isTwoPane = MediaQuery.of(context).size.width > 600;
-
     return AnnotatedRegion(
         value: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
             statusBarBrightness: Brightness.dark,
             statusBarIconBrightness: Brightness.dark),
         child: Scaffold(
+            backgroundColor:  widget.isSkyBlueTheme ? primaryLight : primaryLightVariant,
             body: SafeArea(
                 child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    size: 34,
-                  )),
-              const SizedBox(
-                height: 24,
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.03,
               ),
-              const Text(
-                "Confirm OTP",
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Image.asset(
+                  "assets/images/arrleft.png",
+                  fit: BoxFit.cover,
+                  width: 24,
+                ),
               ),
-              const SizedBox(
-                height: 16,
-              ),
-              Text(
-                "Enter OTP sent to your registered phone number",
-                style: TextStyle(fontSize: 24, color: Colors.grey[600]),
-                softWrap: true,
-              ),
-              const SizedBox(
-                height: 54,
-              ),
-              Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Pinput(
-                        length: 6,
-                        controller: _controller,
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      ElevatedButton(
-                          onPressed: () {
-                            debugPrint("otp>>>${_controller.text}");
-                            validateOTP(_controller.text, widget.mobile);
-                          },
-                          child: const Text("Verify OTP"))
-                    ],
-                  )),
-              const SizedBox(
-                height: 24,
-              ),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 18),
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  Align(alignment: Alignment.centerLeft,
+                  child: const Text(
+                    "Confirm OTP",
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  ),),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  Text(
+                    "Enter OTP sent to your registered phone number",
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                    softWrap: true,
+                  ),
+                  const SizedBox(
+                    height: 54,
+                  ),
+                  Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Pinput(
+                            androidSmsAutofillMethod:  AndroidSmsAutofillMethod.smsRetrieverApi,
+                            length: 6,
+                            controller: _controller,
+                          ),
+                          const SizedBox(
+                            height: 32,
+                          ),
+                          isLoading ?
+                          SpinKitSpinningLines(color: primaryColor, duration: Duration(milliseconds: 2000), size: 40,) :
+                          GestureDetector(
+                            onTap: (){
+                              setState(() {
+                                isLoading = true;
+                              });
+                              debugPrint("otp>>>${_controller.text}");
+                              validateOTP(_controller.text, widget.mobile);
+                            },child:  Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: primaryColor),
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
+                              height:46,
+                              child: Center(child:Text('Verify OTP',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold
+                                ),),
+                              )
+
+                          ),
+                          )
+                          // ElevatedButton(
+                          //     onPressed: () {
+                          //       debugPrint("otp>>>${_controller.text}");
+                          //       validateOTP(_controller.text, widget.mobile);
+                          //     },
+                          //     child: const Text("Verify OTP"))
+                        ],
+                      )),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                ],
+              ),)
             ],
           ),
         ))));
@@ -105,7 +155,7 @@ class _OTPScreenState extends State<OTPScreen> {
         .then((value) {
       if (value.status == StatusCode.success.statusCode) {
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+            .push(MaterialPageRoute(builder: (context) => LoginScreen(isSkyBlueTheme: widget.isSkyBlueTheme,)));
       } else {
         AlertUtil.showAlertDialog(context, value.message!);
       }

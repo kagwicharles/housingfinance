@@ -19,9 +19,10 @@ class AppTheme {
     appBarTheme: AppBarTheme(
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
-        systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
-            statusBarColor: Colors.transparent,
-            statusBarBrightness: Brightness.light),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        // systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
+        //     statusBarColor: Colors.transparent,
+        //     statusBarBrightness: Brightness.light),
         elevation: 2,
         iconTheme: const IconThemeData(color: Colors.white)),
     textTheme: const TextTheme(

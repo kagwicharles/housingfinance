@@ -1,17 +1,20 @@
 import 'package:craft_dynamic/craft_dynamic.dart';
 import 'package:flutter/material.dart';
-import 'package:hfbbank/screens/home/components/cred_deb_card.dart';
-import 'package:hfbbank/screens/home/home_screen.dart';
-import 'package:hfbbank/test.dart';
+import 'package:flutter/services.dart';
+import 'package:hfbbank/screens/dashboard/ATMLocations.dart';
+import 'package:hfbbank/screens/dashboard/AgentLocations.dart';
+import 'package:hfbbank/screens/dashboard/BranchLocations.dart';
+import 'package:hfbbank/screens/dashboard/check_permissions.dart';
+import 'package:hfbbank/screens/home/loading_screen.dart';
 import 'package:hfbbank/theme/theme.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'screens/dashboard/dashboard_screen.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 ProfileRepository _profileRepo = ProfileRepository();
 
 void main() async {
-  bool isTheme1 = true; // Track the current theme
-  bool _isActive;
-
   await WidgetsFlutterBinding.ensureInitialized();
 
   _profileRepo.checkAppActivationStatus().then((value) {
@@ -19,78 +22,58 @@ void main() async {
     // _isActive = value;
   });
 
-  runApp(
-      // MyApp());
-      DynamicCraftWrapper(
-    appInactivityScreen: const ScreenHome(),
-    appLoadingScreen: const DashBoardScreen(),
-    appTimeoutScreen: const DashBoardScreen(),
-    dashboard: const DashBoardScreen(),
-    appTheme: AppTheme.appTheme,
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.light,
+    statusBarBrightness: Brightness.light,
   ));
-}
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: CreDebCard(),
-    );
-  }
-}
+  await Hive.initFlutter();
+  Hive.registerAdapter(AgentLocationAdapter());
+  Hive.openBox<AgentLocation>('agentLocations');
+  Hive.registerAdapter(ATMLocationAdapter());
+  Hive.openBox<ATMLocation>('atmLocations');
+  Hive.registerAdapter(BranchLocsAdapter());
+  Hive.openBox<BranchLocs>('branchLocations');
 
-// import 'package:flutter/material.dart';
-// import 'package:hfbbank/theme/themetest.dart';
-//
-// void main() {
-//   runApp(MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: ThemeToggleDemo(),
-//     );
-//   }
-// }
-//
-// class ThemeToggleDemo extends StatefulWidget {
-//   @override
-//   _ThemeToggleDemoState createState() => _ThemeToggleDemoState();
-// }
-//
-// class _ThemeToggleDemoState extends State<ThemeToggleDemo> {
-//   bool isTheme1 = true; // Track the current theme
-//
-//   void toggleTheme() {
-//     setState(() {
-//       isTheme1 = !isTheme1; // Toggle the theme
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       theme: isTheme1 ? AppTheme.theme1 : AppTheme.theme2, // Use the selected theme
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: Text('Theme Toggle Demo'),
-//         ),
-//         body: Center(
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: <Widget>[
-//               ElevatedButton(
-//                 onPressed: toggleTheme,
-//                 child: Text('Toggle Theme'),
-//               ),
-//               Text('Current Theme: ${isTheme1 ? "Theme 1" : "Theme 2"}'),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-//
+  await checkLocationPermissions();
+  bool isSkyBlueTheme = await CommonSharedPref().checkSkyBlueTheme();
+  runApp(
+      DynamicCraftWrapper(
+        dashboard: DashBoardScreen(isSkyTheme: isSkyBlueTheme,),
+        appLoadingScreen: const LoadingScreen(),
+        appTimeoutScreen: DashBoardScreen(isSkyTheme: isSkyBlueTheme,),
+        appInactivityScreen: DashBoardScreen(isSkyTheme: isSkyBlueTheme,),
+        appTheme: AppTheme.appTheme,
+      )
+  );
+
+  // runApp(
+  //     ShowCaseWidget(
+  //       builder: Builder(
+  //         builder: (context) => DynamicCraftWrapper(
+  //           dashboard: DashBoardScreen(isSkyTheme: isSkyBlueTheme,),
+  //           appLoadingScreen: const LoadingScreen(),
+  //           appTimeoutScreen: DashBoardScreen(isSkyTheme: isSkyBlueTheme,),
+  //           appInactivityScreen: DashBoardScreen(isSkyTheme: isSkyBlueTheme,),
+  //           appTheme: AppTheme.appTheme,
+  //         ),
+  //       ),
+  //     )
+  // );
+
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 1500)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.custom
+    ..indicatorSize = 45.0
+    ..radius = 10.0
+    ..progressColor = Colors.red
+    ..backgroundColor = Colors.white
+    ..indicatorColor = Colors.red
+    ..textColor = Colors.red
+    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..userInteractions = false
+    ..dismissOnTap = false;
+}

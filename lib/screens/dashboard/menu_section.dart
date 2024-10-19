@@ -6,8 +6,9 @@ import 'package:hfbbank/theme/theme.dart';
 
 class MenuSection extends StatelessWidget {
   final bool isActive;
+  final bool isSkyTheme;
 
-  const MenuSection({super.key, required this.isActive});
+  const MenuSection({super.key, required this.isActive, required this.isSkyTheme});
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +22,14 @@ class MenuSection extends StatelessWidget {
                 // title: "Agency Banking",
                 image: "assets/images/agency.png",
                 color: Colors.white),
-            Text(
+            SizedBox(height: 10,),
+            const Text(
               'Agency Banking',
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold, color: primaryColor),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "DMSans",
+                  fontSize: 11,
+                  color: primaryColor),
               textAlign: TextAlign.center,
             )
           ],
@@ -35,10 +40,14 @@ class MenuSection extends StatelessWidget {
                 // title: "School Pay",
                 image: "assets/images/school.png",
                 color: Colors.white),
+            SizedBox(height: 10,),
             Text(
               'School Pay',
               style: const TextStyle(
-                  fontWeight: FontWeight.bold, color: primaryColor),
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "DMSans",
+                  fontSize: 11,
+                  color: primaryColor),
               textAlign: TextAlign.center,
             )
           ],
@@ -51,19 +60,23 @@ class MenuSection extends StatelessWidget {
                 ontap: () {
                   isActive
                       ? Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => LoginScreen()))
+                          builder: (context) => LoginScreen(isSkyBlueTheme: isSkyTheme,)))
                       : Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ActivationScreen()));
+                          builder: (context) => ActivationScreen(isSkyBlueTheme: isSkyTheme,)));
                   // context.navigate(
                   // isActive ?
                   // const LoginScreen();
                   // : const ActivationScreen());
                 },
                 color: Colors.white),
+            SizedBox(height: 10,),
             Text(
               'Mobile Banking',
               style: const TextStyle(
-                  fontWeight: FontWeight.bold, color: primaryColor),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                  fontFamily: "DMSans",
+                  color: primaryColor),
               textAlign: TextAlign.center,
             )
           ],
@@ -74,7 +87,8 @@ class MenuSection extends StatelessWidget {
 }
 
 class MenuSectionLarge extends StatelessWidget {
-  const MenuSectionLarge({super.key});
+  final bool isSkyTheme;
+  const MenuSectionLarge({required this.isSkyTheme});
 
   @override
   Widget build(BuildContext context) => GridView(
@@ -99,7 +113,7 @@ class MenuSectionLarge extends StatelessWidget {
               // title: "Mobile Banking",
               image: "assets/images/dashimg3.png",
               ontap: () {
-                context.navigate(const ActivationScreen());
+                context.navigate( ActivationScreen(isSkyBlueTheme: isSkyTheme,));
               },
               color: const Color(0xffD6DBFF))
         ],
@@ -116,21 +130,30 @@ class TopDashItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-      onTap: ontap,
-      borderRadius: BorderRadius.circular(12),
+    onTap: ontap,
+    child: Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(25), // Rounded corners for the card
+      ),
+      elevation: 3, // Elevation to create shadow effect
       child: Container(
-          height: 80,
-          width: 80,
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-              color: color, borderRadius: BorderRadius.circular(30)),
-          child: Center(
-              child: Container(
-            height: 40,
-            width: 40,
+        height: 70,
+        width: 70,
+        decoration: BoxDecoration(
+          color: color, // Card background color
+          borderRadius: BorderRadius.circular(25), // Border radius
+        ),
+        child: Center(
+          child: Container(
+            height: 38,
+            width: 38,
             child: Image.asset(
               image,
               fit: BoxFit.cover,
             ),
-          ))));
+          ),
+        ),
+      ),
+    ),
+  );
 }

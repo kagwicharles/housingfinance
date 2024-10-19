@@ -8,47 +8,38 @@ class HeaderSectionApp extends StatelessWidget {
   HeaderSectionApp({super.key, required this.header});
 
   @override
-  Widget build(BuildContext context) => Padding(padding: EdgeInsets.all(10),child: Container(
-
-    // height: MediaQuery.of(context).size.height*0.24,
+  Widget build(BuildContext context) => Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Container(
       width: MediaQuery.of(context).size.width,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment : MainAxisAlignment.spaceBetween,
         children: <Widget>[
-
-          // const Expanded(
-          // flex: 1,
-          // child: Row(
-          //   // mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
            InkWell(onTap: (){
-             Scaffold.of(context).openDrawer();
-
-          },child: Icon(Icons.menu, size: 34,color: Colors.white,)),
-          const SizedBox(
-            width: 14,
-          ),
+             // Scaffold.of(context).openDrawer();
+             Navigator.of(context).pop();
+          },child: Icon(Icons.arrow_back_sharp, size: 24,color: Colors.white,)),
+          Spacer(),
            Text(
             header,
-            style: TextStyle(fontSize: 22, color: Colors.white),
+            style: TextStyle(fontSize: 15,
+                fontFamily: "DMSans",
+                fontWeight: FontWeight.bold,
+                color: Colors.white),
           ),
-          // ],
-
-          // Expanded(
-          // flex: 1,
-          // child:
+          Spacer(),
           Padding(
-              padding: const EdgeInsets.all(8),
-              child: IconButton(
-                  onPressed: () {
-                    Get.to(()=>NotificationsClass());
+            padding: const EdgeInsets.all(8),
+            child:       GestureDetector(
+              onTap: (){
 
-                  },
-                  icon: const Icon(
-                    Icons.notifications_sharp,
-                    color: Colors.white,
-                    size: 34,
-                  )))
+              },
+              child: Image.asset(
+                "assets/images/notification.png",
+                fit: BoxFit.cover,
+                width: 18,
+              ),
+            ),),
           // )
         ],
       )));

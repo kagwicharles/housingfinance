@@ -52,7 +52,6 @@ class _RAOState extends State<RAO> {
               controller: _pageController,
               children: [
                 Reach(),
-
                 IdentificationDocuments(),
                 NextOfKin(),
                 Income(),

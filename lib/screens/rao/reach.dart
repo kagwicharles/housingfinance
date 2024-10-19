@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hfbbank/screens/home/headers/header_section.dart';
+import 'package:hfbbank/screens/test.dart';
 
 import '../bridge.dart';
 
@@ -22,11 +23,12 @@ class _ReachState extends State<Reach> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text('How do we reach you'),
-          centerTitle: true,
-        ),
+      backgroundColor: primaryColor,
+        // appBar: AppBar(
+        //   automaticallyImplyLeading: false,
+        //   title: Text('How do we reach you'),
+        //   centerTitle: true,
+        // ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(8.0),

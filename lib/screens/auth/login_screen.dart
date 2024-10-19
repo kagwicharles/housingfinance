@@ -1,14 +1,22 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:craft_dynamic/craft_dynamic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:hfbbank/screens/home/components/home_screen_bottom_nav.dart';
+import 'package:hfbbank/screens/home/components/home_page.dart';
 import 'package:hfbbank/screens/home/home_screen.dart';
 import 'package:hfbbank/theme/theme.dart';
 import 'package:pinput/pinput.dart';
 
+import '../dashboard/dashboard_screen.dart';
+import '../settings/database_helper.dart';
+
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final bool isSkyBlueTheme;
+  const LoginScreen({required this.isSkyBlueTheme});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -18,25 +26,125 @@ class _LoginScreenState extends State<LoginScreen> {
   final authRepository = AuthRepository();
   final _sharedPref= CommonSharedPref();
   bool _isLoading = false;
+  Completer<void> dialogCompleter = Completer<void>();
   _biometricsLogin() {
+    setState(() {
+      _isLoading = true;
+    });
 
     _sharedPref.getLanguageID();
 
     authRepository.biometricLogin(_pinController).then((value) {
 
       if (value) {
-        Get.off(() => ScreenHome());
-
+        setState(() {
+          _isLoading = false;
+        });
+        Get.off(() => ScreenHome(isSkyBlueTheme: widget.isSkyBlueTheme,));
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        _showAlertDialog(dialogCompleter);
       }
       _pinController.clear();
     });
   }
 
+  void _showAlertDialog(Completer<void> dialogCompleter) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          actionsPadding:
+          const EdgeInsets.only(bottom: 16, right: 14, left: 14),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 44),
+          titlePadding: EdgeInsets.zero,
+          contentPadding:
+          const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8.0))),
+          title: Container(
+            height: 100,
+            color: primaryColor,
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Alert",
+                  style: TextStyle(
+                      fontFamily: "DMSans",
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 18
+                  ),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.redAccent,
+                  size: 48,
+                )
+              ],
+            ),
+          ),
+          content: Container(
+            padding: EdgeInsets.only(top: 12, bottom: 12),
+            child: const Text(
+              "Please login with your PIN, navigate to 'Settings' on the bottom menu and select 'Biometrics Login' to enable fingerprint login",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "DMSans",
+                  fontSize: 14
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            Align(
+              alignment: Alignment.center,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: APIService.appPrimaryColor, // Set the blue background color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12), // Adjust the curvature of the borders
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 24.0), // Optional padding
+                ),
+                child: const Text(
+                  "Ok",
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white,
+                      fontFamily: "DMSans",
+                      fontSize: 14),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  dialogCompleter.complete();  // Allow back navigation
+                },
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
-    _biometricsLogin();
+    // _biometricsLogin();
     // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Revert the status bar icons back to dark when leaving this page
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    super.dispose();
   }
 
   // String pin=
@@ -47,81 +155,123 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final isTwoPane = MediaQuery.of(context).size.width < 600;
 
-    return isTwoPane
-        ? AnnotatedRegion(
+    return AnnotatedRegion(
             value: const SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
                 statusBarBrightness: Brightness.dark,
                 statusBarIconBrightness: Brightness.dark),
             child: Scaffold(
+                backgroundColor:  widget.isSkyBlueTheme ? primaryLight : primaryLightVariant,
                 body: SafeArea(
                     child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 // mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        size: 34,
-                      )),
-                  const SizedBox(
-                    height: 24,
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.03,
                   ),
-                  const Text(
-                    "Let’s Sign You In",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          // Navigator.of(context, rootNavigator: true)
+                          //     .pop(context);
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => DashBoardScreen(isSkyTheme: widget.isSkyBlueTheme,)),
+                                (Route<dynamic> route) => false,
+                          );
+                        },
+                        child: Image.asset(
+                          "assets/images/arrleft.png",
+                          fit: BoxFit.cover,
+                          width: 24,
+                        ),
+                      ),
+                      SizedBox(width: 80,),
+                      Image.asset(
+                        "assets/images/main_logo.png",
+                        fit: BoxFit.cover,
+                        height: 45,
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Text(
-                    "Welcome back, you’ve been missed!",
-                    style: TextStyle(fontSize: 24, color: Colors.grey[600]),
-                    softWrap: true,
-                  ),
-                  const SizedBox(
-                    height: 54,
-                  ),
-                  Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Pinput(
-                            obscureText: true,
-                            controller: _pinController,
-                            validator: (val) {
-                              if (val!.isEmpty) {
-                                return 'Field Required';
-                              }
-                              return null;
-                            },
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 18),
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height:32,
+                        ),
+                        Align(alignment: Alignment.centerLeft,
+                        child: const Text(
+                          "Let’s Sign You In",
+                          style: TextStyle(fontSize: 26,
+                              fontFamily: "DMSans",
+                              fontWeight: FontWeight.bold),
+                        ),),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child:                         Text(
+                            "Welcome back, you’ve been greatly missed!",
+                            style: TextStyle(fontSize: 16, fontFamily: "DMSans", color: Colors.grey[600]),
+                            softWrap: true,
                           ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          TextButton(
-                              onPressed: () {},
-                              child: Text(
-                                "Forgot PIN ?",
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.grey[600]),
-                              )),
-                          const SizedBox(
-                            height: 28,
-                          ),
-                          _isLoading
-                              ? CircularProgressIndicator(
-                                  color: primaryColor,
-                                )
-                              : ElevatedButton(
-                                  onPressed: () {
+                        ),
+                        const SizedBox(
+                          height: 32,
+                        ),
+                        Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Pinput(
+                                  obscureText: true,
+                                  controller: _pinController,
+                                  validator: (val) {
+                                    if (val!.isEmpty) {
+                                      return 'Field Required';
+                                    }
+                                    return null;
+                                  },
+                                  defaultPinTheme: PinTheme(
+                                    width: 56, // Set width for each pin box
+                                    height: 56, // Set height for each pin box
+                                    textStyle: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.black,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: widget.isSkyBlueTheme ? Colors.white : Colors.grey[200], // Fill color based on theme
+                                      borderRadius: BorderRadius.circular(8), // Adjust border radius
+                                      border: Border.all(
+                                        color: primaryColor, // Example border color
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                TextButton(
+                                    onPressed: () {},
+                                    child: Text(
+                                      "Forgot PIN ?",
+                                      style: TextStyle(
+                                          fontSize: 16, fontFamily: "DMSans", color: Colors.grey[600]),
+                                    )),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                _isLoading
+                                    ? const SpinKitSpinningLines(color: primaryColor, duration: Duration(milliseconds: 2000), size: 40,)
+                                    : GestureDetector(
+                                  onTap: (){
                                     if (_pinController.text.isEmpty) {
                                       Get.snackbar('Alert', 'PIN Required');
                                     } else {
@@ -131,319 +281,131 @@ class _LoginScreenState extends State<LoginScreen> {
                                       login(_pinController.text);
                                     }
                                   },
-                                  child: const Text("Login"))
-                        ],
-                      )),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  Card(
-                    elevation: 4,
-                    child: InkWell(
-                        onTap: () {
-                          _biometricsLogin();
-                        },
-                        borderRadius: BorderRadius.circular(8),
-                        child: const Padding(
-                            padding: EdgeInsets.all(28),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(Icons.face),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Text(
-                                  "Face Recognition",
-                                  style: TextStyle(fontSize: 18),
-                                  softWrap: true,
-                                ),
-                                Spacer(),
-                                Icon(Icons.arrow_forward_ios_rounded)
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(15),
+                                          color: primaryColor),
+                                      width: MediaQuery
+                                          .of(context)
+                                          .size
+                                          .width,
+                                      height:46,
+                                      child: const Center(child:Text('Login',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: "DMSans",
+                                            fontWeight: FontWeight.bold
+                                        ),),
+                                      )
+                                  ),
+                                )
                               ],
-                            ))),
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Card(
-                    elevation: 4,
-                    child: InkWell(
-                        onTap: () {_biometricsLogin();},
-                        borderRadius: BorderRadius.circular(8),
-                        child: const Padding(
-                            padding: EdgeInsets.all(28),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(Icons.fingerprint),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Text(
-                                  "Fingerprint Recognition",
-                                  style: TextStyle(fontSize: 18),
-                                  softWrap: true,
-                                ),
-                                Spacer(),
-                                Icon(Icons.arrow_forward_ios_rounded)
-                              ],
-                            ))),
+                            )),
+                        const SizedBox(
+                          height: 32,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Divider(
+                                color: Colors.grey[600],
+                                thickness: 0.5,
+                                indent: 14,
+                                endIndent: 16,
+                              ),
+                            ),
+                            Text(
+                              'Or Login With',
+                              style: TextStyle(
+                                fontFamily: "DMSans",
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            Expanded(
+                              child: Divider(
+                                color: Colors.grey[600],
+                                thickness: 0.5,
+                                indent: 16,
+                                endIndent: 24,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 32,
+                        ),
+                        // Card(
+                        //   margin: EdgeInsets.zero,
+                        //   elevation: 4,
+                        //   child: InkWell(
+                        //       onTap: () {
+                        //         _biometricsLogin();
+                        //       },
+                        //       borderRadius: BorderRadius.circular(8),
+                        //       child: const Padding(
+                        //           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 22),
+                        //           child: Row(
+                        //             crossAxisAlignment: CrossAxisAlignment.center,
+                        //             children: [
+                        //               Icon(Icons.face),
+                        //               SizedBox(
+                        //                 width: 8,
+                        //               ),
+                        //               Text(
+                        //                 "Face Recognition",
+                        //                 style: TextStyle( fontFamily: "DMSans",
+                        //                 fontWeight: FontWeight.bold),
+                        //                 softWrap: true,
+                        //               ),
+                        //               Spacer(),
+                        //               Icon(Icons.arrow_forward_ios_rounded, size: 18,)
+                        //             ],
+                        //           ))),
+                        // ),
+                        // const SizedBox(
+                        //   height: 12,
+                        // ),
+                        Card(
+                          color: Colors.grey[200],
+                          margin: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: Theme.of(context).primaryColor, // Use the primary color from the theme
+                              width: 0.8, // Set the border width
+                            ),
+                            borderRadius: BorderRadius.circular(18.0), // Adjust the radius here
+                          ),
+                          elevation: 1,
+                          child: InkWell(
+                              onTap: () {_biometricsLogin();},
+                              borderRadius: BorderRadius.circular(8),
+                              child: const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.fingerprint, color: primaryColor,),
+                                      Spacer(),
+                                      Text(
+                                        "Fingerprint Recognition",
+                                        style: TextStyle(fontFamily: "DMSans",
+                                        color: primaryColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold),
+                                        softWrap: true,
+                                      ),
+                                      Spacer(),
+                                      Icon(Icons.arrow_forward_ios_rounded, size: 18, color: primaryColor,)
+                                    ],
+                                  ))),
+                        )
+                      ],
+                    ),
                   )
                 ],
               ),
-            ))))
-        : AnnotatedRegion(
-            value: const SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                statusBarBrightness: Brightness.dark,
-                statusBarIconBrightness: Brightness.dark),
-            child: Scaffold(
-                backgroundColor: primaryLightVariant,
-                body: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20)),
-                    margin: const EdgeInsets.only(
-                        bottom: 50, left: 200, right: 200, top: 50),
-                    child: Center(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        // Ensure both sides take the full height
-                        children: [
-                          Expanded(
-                            flex: 0, // Adjust the flex values as needed
-                            child: Center(
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(20.0),
-                                  // Adjust the radius as needed
-                                  bottomLeft: Radius.circular(20.0),
-                                ),
-                                child:
-                                    // Container(color: primaryColor,)
-                                    Image.asset(
-                                        'assets/images/hfb.jpg'), // Your image widget
-                              ),
-                            ),
-                          ),
-                          // const SizedBox(
-                          //   width: 20,
-                          // ),
-                          Expanded(
-                              //   flex: 3, // Adjust the flex values as needed
-                              child: Center(
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(20.0),
-                                // Adjust the radius as needed
-                                bottomLeft: Radius.circular(20.0),
-                              ), // Color for the form side
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                        height: 100,
-                                        child: Image.asset(
-                                            'assets/images/main_logo.png')),
-                                    const SizedBox(
-                                      height: 50,
-                                    ),
-
-                                    Container(
-                                        margin: const EdgeInsets.only(
-                                            left: 150, right: 150),
-                                        child: Form(
-                                            key: _formKey,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Text(
-                                                  'PLEASE LOGIN TO CONTINUE',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20),
-                                                ),
-                                                const SizedBox(
-                                                  height: 35,
-                                                ),
-                                                TextFormField(
-                                                  decoration: InputDecoration(
-                                                    contentPadding:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    // Padding inside the TextFormField
-                                                    border: OutlineInputBorder(
-                                                      borderSide:
-                                                          const BorderSide(
-                                                              color:
-                                                                  Colors.black,
-                                                              width: 1.0),
-                                                      // Define the border color and width
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.0), // Define the border radius
-                                                    ),
-                                                    focusedBorder:
-                                                        OutlineInputBorder(
-                                                      borderSide:
-                                                          const BorderSide(
-                                                              color:
-                                                                  Colors.black,
-                                                              width: 2.0),
-                                                      // Define the focused border color and width
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.0), // Define the focused border radius
-                                                    ),
-                                                    labelText: 'Email',
-                                                    // Add a label if needed
-                                                    hintText:
-                                                        'Email', // Add a hint text if needed
-                                                  ),
-                                                  controller: null,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Email Required";
-                                                    }
-                                                    return null;
-                                                  },
-                                                ),
-                                                const SizedBox(
-                                                  height: 20,
-                                                ),
-                                                TextFormField(
-                                                  decoration: InputDecoration(
-                                                    contentPadding:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    // Padding inside the TextFormField
-                                                    border: OutlineInputBorder(
-                                                      borderSide:
-                                                          const BorderSide(
-                                                              color:
-                                                                  Colors.black,
-                                                              width: 1.0),
-                                                      // Define the border color and width
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.0), // Define the border radius
-                                                    ),
-                                                    focusedBorder:
-                                                        OutlineInputBorder(
-                                                      borderSide:
-                                                          const BorderSide(
-                                                              color:
-                                                                  Colors.black,
-                                                              width: 2.0),
-                                                      // Define the focused border color and width
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.0), // Define the focused border radius
-                                                    ),
-                                                    labelText: 'Password',
-                                                    // Add a label if needed
-                                                    hintText:
-                                                        'Password', // Add a hint text if needed
-                                                  ),
-                                                  obscureText: true,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Password is Required";
-                                                    }
-                                                    return null;
-                                                  },
-                                                  controller: null,
-                                                ),
-                                                const SizedBox(
-                                                  height: 20,
-                                                ),
-                                                if (_isLoading)
-                                                  const Center(
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                              color:
-                                                                  primaryColor))
-                                                else
-                                                  Container(
-                                                      decoration: BoxDecoration(
-                                                          color: primaryColor,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10)),
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                      height: 50,
-                                                      child: GestureDetector(
-                                                          onTap: () {
-                                                            debugPrint(
-                                                                'logintoken>${token}');
-                                                            Navigator.of(
-                                                                    context)
-                                                                .push(MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            HomeBottomNav()));
-                                                            //
-                                                            // _login(
-                                                            //
-                                                            //   // _usernameController
-                                                            //   //     .text,
-                                                            //   // _passwordController
-                                                            //   //     .text,
-                                                            //     token!);
-                                                          },
-                                                          child: const Center(
-                                                              child: Text(
-                                                            'Login',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 20,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ))))
-                                              ],
-                                            ))),
-
-                                    const SizedBox(
-                                      height: 50,
-                                    ),
-                                    // Container(
-                                    //     decoration: BoxDecoration(
-                                    //         color: const Color(0xffF2F2F2),
-                                    //         borderRadius: BorderRadius.circular(10)),
-                                    //     margin: const EdgeInsets.only(
-                                    //         left: 150, right: 150),
-                                    //     width: MediaQuery.of(context).size.width,
-                                    //     height: 50,
-                                    //     child: GestureDetector(
-                                    //         onTap: () {},
-                                    //         child: const Center(
-                                    //             child: Text(
-                                    //           'First Time Login',
-                                    //           style: TextStyle(
-                                    //               color: Colors.black,
-                                    //               fontSize: 20,
-                                    //               fontWeight: FontWeight.bold),
-                                    //         ))))
-                                    // Add more form fields as needed
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ))
-                        ],
-                      ),
-                    ))));
+            ))));
   }
 
   void login(String pin) {
@@ -452,7 +414,14 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
       if (value.status == StatusCode.success.statusCode) {
-        Get.offAll(() => ScreenHome());
+        if  (value.imageUrl.toString() != "[]"){
+          // Parse the JSON string into a Dart object
+          List<dynamic> images = jsonDecode(value.imageUrl!);
+          // Extract the "Image" string from the first object in the array
+          String imageString = images[0]["Image"];
+          DatabaseHelper.instance.insertProfileImage(imageString);
+        }
+        Get.offAll(() => ScreenHome(isSkyBlueTheme: widget.isSkyBlueTheme,));
         // Navigator.of(context)
         //     .push(MaterialPageRoute(builder: (context) => const ScreenHome()));
       } else {

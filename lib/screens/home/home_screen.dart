@@ -1,148 +1,136 @@
-import 'package:circular_bottom_navigation/circular_bottom_navigation.dart';
-import 'package:circular_bottom_navigation/tab_item.dart';
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:craft_dynamic/craft_dynamic.dart';
 import 'package:flutter/material.dart';
-import 'package:hfbbank/screens/home/components/account_tab.dart';
-import 'package:hfbbank/screens/home/components/home_screen_bottom_nav.dart';
-import 'package:hfbbank/screens/home/components/profile_screen.dart';
-import 'package:hfbbank/screens/home/components/transaction_screen.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hfbbank/screens/home/components/home_page.dart';
+import 'package:hfbbank/screens/settings/profile_screen.dart';
 import 'package:hfbbank/theme/theme.dart';
-
-import 'components/mini_statement.dart';
+import '../beneficiaryMgt/beneficiary_mgt.dart';
+import '../transaction_list/transaction_list.dart';
 
 class ScreenHome extends StatefulWidget {
-  const ScreenHome({Key? key}) : super(key: key);
-
+  final bool isSkyBlueTheme;
+  const ScreenHome({required this.isSkyBlueTheme});
   @override
-  State<ScreenHome> createState() => _ScreenHomeState();
+  _ScreenHomeState createState() => _ScreenHomeState();
 }
 
 class _ScreenHomeState extends State<ScreenHome> {
-  bool isTheme1 = true; // Track the current theme
+  int selectedIndex = 0; // The selected tab index
+  bool isSkyBlueTheme = false; // Default theme state
 
-  void toggleTheme() {
-    setState(() {
-      isTheme1 = !isTheme1; // Toggle the theme
-    });
-  }
-
-  final _moduleRepo = ModuleRepository();
-  final _profileRepository = ProfileRepository();
-
-  var firstName;
-  var lastName;
-  var email;
-  var ID;
-  var image;
-  var phone;
-
-  getName() async {
-    firstName = lastName =
-        await CommonSharedPref().getUserData(UserAccountData.LastName.name);
-    email = await CommonSharedPref().getUserData(UserAccountData.EmailID.name);
-    ID = await CommonSharedPref().getUserData(UserAccountData.IDNumber.name);
-    image =
-        await CommonSharedPref().getUserData(UserAccountData.ImageUrl.name) ??
-            "";
-    phone = await CommonSharedPref().getUserData(UserAccountData.Phone.name);
-    debugPrint(">>>${image.toString()}");
-  }
-
-  static List<Widget> _widgetOptions = <Widget>[
-    HomeBottomNav(),
-
-    // TransactionTab(),
-    // Accounts(),
-    Ministatement(),
-
-    ProfileTab()
-  ];
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  List<Widget> _widgetOptions = [];
 
   @override
   void initState() {
-    getName();
-    // TODO: implement initState
     super.initState();
+    loadThemeAndInitWidgets();
+  }
+
+  Future<void> loadThemeAndInitWidgets() async {
+    isSkyBlueTheme = await CommonSharedPref().checkSkyBlueTheme();
+    String firstName = await CommonSharedPref().getUserData(UserAccountData.FirstName.name);
+
+    setState(() {
+      _widgetOptions = <Widget>[
+        HomePage(isSkyBlueTheme: isSkyBlueTheme, firstName: firstName,),
+        BeneficiaryMgt(isSkyBlueTheme: isSkyBlueTheme),
+        MyTransactions(isSkyBlueTheme: isSkyBlueTheme),
+        ProfileTab(isSkyBlueTheme: isSkyBlueTheme),
+      ];
+    });
+  }
+
+  void _onItemTapped(int index) async {
+    bool updatedIsSkyBlueTheme = await CommonSharedPref().checkSkyBlueTheme();
+    String firstName = await CommonSharedPref().getUserData(UserAccountData.FirstName.name);
+
+    setState(() {
+      isSkyBlueTheme = updatedIsSkyBlueTheme;
+      selectedIndex = index;
+
+      _widgetOptions = <Widget>[
+        HomePage(isSkyBlueTheme: isSkyBlueTheme, firstName: firstName,),
+        BeneficiaryMgt(isSkyBlueTheme: isSkyBlueTheme),
+        MyTransactions(isSkyBlueTheme: isSkyBlueTheme),
+        ProfileTab(isSkyBlueTheme: isSkyBlueTheme),
+      ];
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size.width < 600;
+
+    if (_widgetOptions.isEmpty) {
+      return Container(
+        color: isSkyBlueTheme
+            ? primaryLight
+            : primaryLightVariant,
+        child: Center(
+          heightFactor: MediaQuery.of(context).size.height,
+          child: const SpinKitSpinningLines(color: primaryColor, duration: Duration(milliseconds: 2000), size: 40,), // Show loading indicator until widget options are populated
+        ),
+      );
+    }
+
     return screenSize
         ? Scaffold(
-            // drawer: Drawer(),
-            // appBar: AppBar(
-            //   leading: InkWell(
-            //     onTap: () {
-            //       _profileRepository.checkMiniStatement('1100206653').then((value) {
-            //         debugPrint('Balance Value>>>>>>$value');
-            //         AlertUtil.showAlertDialog(context, value.toString());
-            //       });
-            //     },
-            //     child: const Icon(Icons.menu),
-            //   ),
-            //   title: const Text('HFB'),
-            // ),
-            body: Center(
-              child: _widgetOptions.elementAt(_selectedIndex),
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-                items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.home_filled),
-                      label: 'Home',
-                      backgroundColor: primaryColor),
-                  // BottomNavigationBarItem(
-                  //     icon: Icon(Icons.monetization_on),
-                  //     // activeIcon: Icon(Icons.account_balance),
-                  //     label: 'Transaction',
-                  //     backgroundColor: primaryColor
-                  //     ),
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.account_balance_wallet),
-                      // activeIcon: Icon(Icons.account_balance),
-                      label: 'Accounts',
-                      backgroundColor: primaryColor),
-                  // BottomNavigationBarItem(
-                  //   icon: Icon(Icons.account_balance_wall et_outlined),
-                  //   label: 'Accounts',
-                  //   backgroundColor: primaryColor,
-                  // ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person_rounded),
-                    label: 'Profile',
-                    backgroundColor: primaryColor,
-                  ),
-                ],
-                type: BottomNavigationBarType.shifting,
-                // backgroundColor: Colors.blue,
-                currentIndex: _selectedIndex,
-                selectedItemColor: Colors.yellow,
-                iconSize: 25,
-                onTap: _onItemTapped,
-                elevation: 5),
-          )
-        : Container();
+        body: IndexedStack(
+          index: selectedIndex,
+          children: _widgetOptions, // Widgets stored in the stack
+        ),
+        // Center(
+        //   child: _widgetOptions.elementAt(selectedIndex),
+        // ),
+        bottomNavigationBar: StyleProvider(
+          style: Style(),
+          child: ConvexAppBar(
+            initialActiveIndex: 0,
+            height: 70, // Overall height of the bar
+            top: -16,
+            curveSize: 80,
+            style: TabStyle.reactCircle, // You can try other styles
+            items: [
+              TabItem(icon: Icons.home_filled, title: 'Home'),
+              TabItem(icon: Icons.people_alt, title: 'Beneficiaries'),
+              TabItem(icon: Icons.article_outlined, title: 'Transactions'),
+              TabItem(icon: Icons.settings, title: 'App Settings'),
+            ],
+            backgroundColor: primaryColor, // Background color of the app bar
+            activeColor: Colors.white, // Color of the active icon
+            color: Colors.white, // Color for inactive icons
+            onTap: _onItemTapped, // Check theme and navigate
+          ),
+        ))
+        : Container(); // Handle case for larger screens if needed
+  }
+}
+
+class Style extends StyleHook {
+  @override
+  double get activeIconSize => 28;
+
+  @override
+  double get activeIconMargin => 15;
+
+  @override
+  double get iconSize => 20; // Non-active icon size
+
+  @override
+  TextStyle textStyle(Color color, String? fontFamily) {
+    return TextStyle(
+      fontSize: 10,
+      color: color,
+      fontWeight: FontWeight.bold,
+      fontFamily: "Manrope",
+      height: 2,
+    );
   }
 
-// ,
-
-// Stack(
-//   children: <Widget>[
-//     Padding(
-//       padding: EdgeInsets.only(bottom: bottomNavBarHeight),
-//       child: bodyContainer(),
-//     ),
-//     Align(alignment: Alignment.bottomCenter, child: bottomNav())
-//   ],
-// ),
-//   );
-// }
+  @override
+  EdgeInsetsGeometry get iconPadding {
+    return EdgeInsets.only(
+        bottom: 8);
+  }
 }
