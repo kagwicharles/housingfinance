@@ -382,7 +382,7 @@ class _BeneficiaryMgtState extends State<BeneficiaryMgt> {
                             ),
                             borderRadius: BorderRadius.zero,
                             value:
-                            selectedBillerName, // Provide the currently selected value (can be null initially)
+                            selectedBillerName,
                             onChanged: (newValue) {
                               setState(() {
                                 selectedBillerName = newValue;

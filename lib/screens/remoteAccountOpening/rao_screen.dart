@@ -173,7 +173,7 @@ class _CustomerDataScreenState extends State<CustomerDataScreen> {
       AltAccountDetails(customerData: customerData),
       PEPExposure(customerData: customerData),
       AdditionalDetails(customerData: customerData),
-      // RaoOTP(customerData: customerData),
+      RaoOTP(customerData: customerData),
     ];
   }
 
@@ -296,7 +296,7 @@ class _CustomerDataScreenState extends State<CustomerDataScreen> {
             _showAlert("Alert!", "Please select your political exposure status");
           } else if (customerData.pepIsExposed == 'No' && (customerData.hasPepRelative != 'Yes' && customerData.hasPepRelative != 'No')){
             _showAlert("Alert!", "Please confirm if you have a politically exposed relative");
-          } else if (int.parse(customerData.pepStartYear) > int.parse(customerData.pepEndYear)){
+          } else if ((customerData.pepStartYear.isNotEmpty && customerData.pepEndYear.isNotEmpty) && (int.parse(customerData.pepStartYear) > int.parse(customerData.pepEndYear))){
             _showAlert("Oops!", "The Start Year cannot be greater than the End year");
           }  else {
             currentStep++;
@@ -976,18 +976,22 @@ class _CustomerDataScreenState extends State<CustomerDataScreen> {
                                           currentStep == getForms().length - 4
                                                       ? 'Accept'
                                                       : 'Next',
-                                      style: const TextStyle(
-                                        color: Colors.white,
+                                      style: TextStyle(
+                                        color: currentStep == 9
+                                            ? primaryColor
+                                            : Colors.white,
                                         fontFamily: "Manrope",
                                         fontWeight: FontWeight.bold,
                                         fontSize: 13,
                                       ),
                                     ),
                                     const SizedBox(width: 16),
-                                    const Image(
+                                    Image(
                                       image: AssetImage("assets/images/forward.png"),
                                       width: 32,
-                                      color: Colors.white,
+                                      color: currentStep == 9
+                                          ? primaryColor
+                                          : Colors.white,
                                     ),
                                   ],
                                 ),

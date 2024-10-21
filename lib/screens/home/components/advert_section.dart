@@ -24,13 +24,12 @@ class _AdvertSectionState extends State<AdvertSection> {
           padding: EdgeInsets.zero,
           child: CarouselSlider(
             carouselController: _carouselController, // Attach the controller
-            options: CarouselOptions(
-              height: 150, // Set the height of the carousel
-              viewportFraction: 0.8, // Show part of the next item
+            options: CarouselOptions( // Set the height of the carousel
+              viewportFraction: 1, // Show part of the next item
               enableInfiniteScroll: true, // Allow infinite scrolling
-              enlargeCenterPage: false, // Don't pad ends
+              enlargeCenterPage: true, // Don't pad ends
               autoPlay: true, // Auto-advance items
-              autoPlayInterval: Duration(seconds: 3), // Auto-advance interval
+              autoPlayInterval: Duration(seconds: 5), // Auto-advance interval
               onPageChanged: (index, reason) {
                 setState(() {
                   _currentIndex = index; // Track current index
@@ -40,43 +39,43 @@ class _AdvertSectionState extends State<AdvertSection> {
             items: [
               // First image
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 8.0), // Add space between images
+                margin: EdgeInsets.zero, // Add space between images
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0), // Curved borders
+                  borderRadius: BorderRadius.zero, // Curved borders
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15.0), // Match the border radius
+                  borderRadius: BorderRadius.zero, // Match the border radius
                   child: Image.asset('assets/images/boss.png', fit: BoxFit.cover),
                 ),
               ),
 
               // Second image
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 8.0), // Add space between images
+                margin: EdgeInsets.zero, // Add space between images
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0), // Curved borders
+                  borderRadius: BorderRadius.zero, // Curved borders
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15.0), // Match the border radius
+                  borderRadius: BorderRadius.zero, // Match the border radius
                   child: Image.asset('assets/images/ad1.png', fit: BoxFit.cover),
                 ),
               ),
 
               // Third image
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 8.0), // Add space between images
+                margin: EdgeInsets.zero, // Add space between images
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0), // Curved borders
+                  borderRadius: BorderRadius.zero, // Curved borders
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15.0), // Match the border radius
+                  borderRadius: BorderRadius.zero, // Match the border radius
                   child: Image.asset('assets/images/boss.png', fit: BoxFit.cover),
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 20),
         // Dots indicator with custom design
         AnimatedSmoothIndicator(
           activeIndex: _currentIndex, // Bind the activeIndex with current carousel index

@@ -1,6 +1,7 @@
 import 'package:craft_dynamic/craft_dynamic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:hfbbank/screens/dashboard/branch_locations.dart';
 import 'package:hfbbank/screens/dashboard/contacts_section.dart';
@@ -10,8 +11,11 @@ import 'package:hfbbank/screens/dashboard/menu_section.dart';
 import 'package:hfbbank/screens/home/components/advert_section.dart';
 import 'package:hfbbank/theme/theme.dart';
 import 'package:hfbbank/util/utils.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_unilink/whatsapp_unilink.dart';
+import '../auth/activation_screen.dart';
+import '../auth/login_screen.dart';
 import '../remoteAccountOpening/rao_screen.dart';
 
 class DashBoardScreen extends StatefulWidget {
@@ -63,11 +67,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       body: SafeArea(
         child: Column(mainAxisSize: MainAxisSize.max, children: [
           const SizedBox(
-            height: 24,
+            height: 20,
           ),
           const HeaderSection(),
           const SizedBox(
-            height: 16,
+            height: 20,
           ),
           Expanded(
               child: Container(
@@ -86,36 +90,144 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       children: [
                         Padding(
                             padding:
-                            const EdgeInsets.only(left: 24, top: 24),
+                            const EdgeInsets.only(left: 20, top: 24),
                             child: Text(
                               Util.getGreeting(),
                               style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   fontFamily: "DMSans",
                                   color: Colors.grey[600]),
                               softWrap: true,
                             )),
                         Padding(
-                            padding: const EdgeInsets.only(left: 24),
+                            padding: const EdgeInsets.only(left: 20),
                             child: Text(
                               "${firstName ?? "Customer"}",
                               style: const TextStyle(
-                                  fontSize: 26,
+                                  fontSize: 24,
                                   fontFamily: "DMSans",
                                   fontWeight: FontWeight.bold),
                             )),
                         const SizedBox(
-                          height: 16,
+                          height: 8,
                         ),
-                        Padding(
-                            padding:
-                            const EdgeInsets.only(left: 24, right: 24),
-                            child: MenuSection(
-                              isActive: isActive, isSkyTheme: widget.isSkyTheme,
+                        // WelcomeWidget(onProceedToLogin: () {  },),
+                        // Padding(
+                        //     padding:
+                        //     const EdgeInsets.only(left: 24, right: 24),
+                        //     child: MenuSection(
+                        //       isActive: isActive, isSkyTheme: widget.isSkyTheme,
+                        //
+                        //     )),
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Row(
+                              //   children: [
+                              //     Icon(Icons.account_circle, color: Colors.white, size: 40), // Profile-like icon
+                              //     const SizedBox(width: 12),
+                              //     Text(
+                              //       "Welcome Back!",
+                              //       style: TextStyle(
+                              //         fontSize: 24,
+                              //         fontFamily: "DMSans",
+                              //         fontWeight: FontWeight.bold,
+                              //         color: Colors.white,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
+                              Text(
+                                "Explore your banking needs with ease.",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                  fontFamily: "DMSans",
+                                ),
+                                softWrap: true,
+                              ),
+                              const SizedBox(height: 16),
+                              Card(
+                                margin: EdgeInsets.zero,
+                                color: primaryColor,
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: InkWell(
+                                  onTap: (){
+                                    Navigator.push(
+                                      context,
+                                      PageTransition(
+                                        type: PageTransitionType.rightToLeftWithFade,
+                                        duration: Duration(milliseconds: 500),
+                                        child: LoginScreen(isSkyBlueTheme: widget.isSkyTheme,),
+                                      ),
+                                    );
+                                    isActive
+                                        ? Navigator.push(
+                                      context,
+                                      PageTransition(
+                                        type: PageTransitionType.rightToLeftWithFade,
+                                        duration: Duration(milliseconds: 500),
+                                        child: LoginScreen(isSkyBlueTheme: widget.isSkyTheme,),
+                                      ),
+                                    )
+                                    // Navigator.of(context).push(MaterialPageRoute(
+                                    //     builder: (context) => LoginScreen(isSkyBlueTheme: widget.isSkyTheme,)))
+                                        : Navigator.push(
+                                      context,
+                                      PageTransition(
+                                        type: PageTransitionType.rightToLeftWithFade,
+                                        duration: Duration(milliseconds: 500),
+                                        child: ActivationScreen(isSkyBlueTheme: widget.isSkyTheme,),
+                                      ),
+                                    );
 
-                            )),
+                                    // Navigator.of(context).push(MaterialPageRoute(
+                                    //     builder: (context) => ActivationScreen(isSkyBlueTheme: widget.isSkyTheme,)));
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          isActive ? "Proceed to Login" : "Proceed to App Activation",
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontFamily: "DMSans",
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        Icon(Icons.arrow_forward, color: Colors.white, size: 18,),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(Icons.shield, size: 16, color: Colors.grey[600],),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        "Banking made secure",
+                                        style: TextStyle(fontSize: 12, color: Colors.grey[600],fontFamily: "DMSans",),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),),
                         const SizedBox(
-                          height: 24,
+                          height: 16,
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width,
@@ -130,10 +242,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(
-                                  height: 24,
+                                  height: 16,
                                 ),
-                                const AdvertSection(),
-                                const SizedBox(height: 16),
+                                // const AdvertSection(),
+                                // const SizedBox(height: 16),
                                 Padding(padding: EdgeInsets.symmetric(horizontal: 24),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,6 +290,17 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                               TopDashItem(
                                                   image:
                                                   "assets/images/calc.png",
+                                                  ontap: (){
+                                                    Fluttertoast.showToast(
+                                                      msg: "Coming Soon",
+                                                      toastLength: Toast.LENGTH_SHORT,
+                                                      gravity: ToastGravity.BOTTOM, // You can change the position
+                                                      timeInSecForIosWeb: 1,
+                                                      backgroundColor: Colors.black,
+                                                      textColor: Colors.white,
+                                                      fontSize: 14.0,
+                                                    );
+                                                  },
                                                   color: Colors.white),
                                               SizedBox(height: 12,),
                                               const Text(
@@ -199,7 +322,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                   image:
                                                   "assets/images/pLoans.png",
                                                   ontap: () {
-                                                    // context.navigate(const ActivationScreen());
+                                                    Fluttertoast.showToast(
+                                                      msg: "Coming Soon",
+                                                      toastLength: Toast.LENGTH_SHORT,
+                                                      gravity: ToastGravity.BOTTOM, // You can change the position
+                                                      timeInSecForIosWeb: 1,
+                                                      backgroundColor: Colors.black,
+                                                      textColor: Colors.white,
+                                                      fontSize: 14.0,
+                                                    );
                                                   },
                                                   color: Colors.white),
                                               SizedBox(height: 12,),
@@ -218,7 +349,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                         ],
                                       ),
                                       const SizedBox(
-                                        height: 20,
+                                        height: 16,
                                       ),
                                       Row(
                                         mainAxisAlignment:
@@ -228,8 +359,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                             children: [
                                               GestureDetector(
                                                 onTap: (){
-                                                  CommonUtils.navigateToRoute(
-                                                      context: context, widget: MapView(type: "BRANCH"));
+                                                  Fluttertoast.showToast(
+                                                    msg: "Coming Soon",
+                                                    toastLength: Toast.LENGTH_SHORT,
+                                                    gravity: ToastGravity.BOTTOM, // You can change the position
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor: Colors.black,
+                                                    textColor: Colors.white,
+                                                    fontSize: 14.0,
+                                                  );
                                                 },
                                                 child: TopDashItem(
                                                     image:
@@ -253,8 +391,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                             children: [
                                               GestureDetector(
                                                 onTap: (){
-                                                  CommonUtils.navigateToRoute(
-                                                      context: context, widget: MapView(type: "ATM"));
+                                                  Fluttertoast.showToast(
+                                                    msg: "Coming Soon",
+                                                    toastLength: Toast.LENGTH_SHORT,
+                                                    gravity: ToastGravity.BOTTOM, // You can change the position
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor: Colors.black,
+                                                    textColor: Colors.white,
+                                                    fontSize: 14.0,
+                                                  );
                                                 },
                                                 child: TopDashItem(
                                                     image:
@@ -278,14 +423,29 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                             children: [
                                               GestureDetector(
                                                 onTap: (){
-                                                  CommonUtils.navigateToRoute(
-                                                      context: context, widget: MapView(type: "BRANCH"));
+                                                  Fluttertoast.showToast(
+                                                    msg: "Coming Soon",
+                                                    toastLength: Toast.LENGTH_SHORT,
+                                                    gravity: ToastGravity.BOTTOM, // You can change the position
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor: Colors.black,
+                                                    textColor: Colors.white,
+                                                    fontSize: 14.0,
+                                                  );
                                                 },child: TopDashItem(
                                                 // title: "Mobile Banking",
                                                   image:
                                                   "assets/images/homeL.png",
                                                   ontap: () {
-                                                    // context.navigate(const ActivationScreen());
+                                                    Fluttertoast.showToast(
+                                                      msg: "Coming Soon",
+                                                      toastLength: Toast.LENGTH_SHORT,
+                                                      gravity: ToastGravity.BOTTOM, // You can change the position
+                                                      timeInSecForIosWeb: 1,
+                                                      backgroundColor: Colors.black,
+                                                      textColor: Colors.white,
+                                                      fontSize: 14.0,
+                                                    );
                                                   },
                                                   color: Colors.white),
                                               ),
@@ -305,160 +465,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                         ],
                                       ),
                                       const SizedBox(
-                                        height: 24,
+                                        height: 32,
                                       ),
-                                      // const Text(
-                                      //   "Contact Us",
-                                      //   style: TextStyle(
-                                      //       fontSize: 15,
-                                      //       fontFamily: "DMSans",
-                                      //       fontWeight: FontWeight.bold,
-                                      //       color: primaryColor),
-                                      // ),
-                                      // const SizedBox(
-                                      //   height: 20,
-                                      // ),
-                                      // Row(
-                                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      //   children: [
-                                      //     Column(
-                                      //       children: [
-                                      //         GestureDetector(
-                                      //           onTap: (){
-                                      //             launchWhatsAppUri(
-                                      //                 "+256771888755",
-                                      //                 "Hi, I need help");
-                                      //           },
-                                      //           child: Image.asset(
-                                      //             "assets/images/cc.png",
-                                      //             fit: BoxFit.cover,
-                                      //             height: 40,
-                                      //           ),
-                                      //         ),
-                                      //         SizedBox(height: 12,),
-                                      //         const Text(
-                                      //           'Chat',
-                                      //           style: TextStyle(
-                                      //               fontWeight:
-                                      //               FontWeight.bold,
-                                      //               fontFamily: "DMSans",
-                                      //               fontSize: 11,
-                                      //               color: primaryColor),
-                                      //           textAlign: TextAlign.center,
-                                      //         )
-                                      //       ],
-                                      //     ),
-                                      //     Column(
-                                      //       children: [
-                                      //         GestureDetector(
-                                      //           onTap: (){
-                                      //             _launchPhoneCaller(
-                                      //                 '0800211082');
-                                      //           },
-                                      //           child: Image.asset(
-                                      //             "assets/images/call.png",
-                                      //             fit: BoxFit.cover,
-                                      //             height: 40,
-                                      //           ),
-                                      //         ),
-                                      //         SizedBox(height: 12,),
-                                      //         const Text(
-                                      //           'Call',
-                                      //           style: TextStyle(
-                                      //               fontWeight:
-                                      //               FontWeight.bold,
-                                      //               fontFamily: "DMSans",
-                                      //               fontSize: 11,
-                                      //               color: primaryColor),
-                                      //           textAlign: TextAlign.center,
-                                      //         )
-                                      //       ],
-                                      //     ),
-                                      //     Column(
-                                      //       children: [
-                                      //         GestureDetector(
-                                      //           onTap: (){
-                                      //             context.navigate(
-                                      //                 Locations());
-                                      //           },
-                                      //           child: Image.asset(
-                                      //             "assets/images/mail.png",
-                                      //             fit: BoxFit.cover,
-                                      //             height: 40,
-                                      //           ),
-                                      //         ),
-                                      //         SizedBox(height: 12,),
-                                      //         const Text(
-                                      //           'E-mail',
-                                      //           style: TextStyle(
-                                      //               fontWeight:
-                                      //               FontWeight.bold,
-                                      //               fontFamily: "DMSans",
-                                      //               fontSize: 11,
-                                      //               color: primaryColor),
-                                      //           textAlign: TextAlign.center,
-                                      //         )
-                                      //       ],
-                                      //     ),
-                                      //     Column(
-                                      //       children: [
-                                      //         GestureDetector(
-                                      //           onTap: (){
-                                      //             context.navigate(
-                                      //                 Locations());
-                                      //           },
-                                      //           child: Image.asset(
-                                      //             "assets/images/mail.png",
-                                      //             fit: BoxFit.cover,
-                                      //             height: 40,
-                                      //           ),
-                                      //         ),
-                                      //         SizedBox(height: 12,),
-                                      //         const Text(
-                                      //           'Locations',
-                                      //           style: TextStyle(
-                                      //               fontWeight:
-                                      //               FontWeight.bold,
-                                      //               fontFamily: "DMSans",
-                                      //               fontSize: 11,
-                                      //               color: primaryColor),
-                                      //           textAlign: TextAlign.center,
-                                      //         )
-                                      //       ],
-                                      //     ),
-                                      //     Column(
-                                      //       children: [
-                                      //         GestureDetector(
-                                      //           onTap: (){
-                                      //             context.navigate(
-                                      //                 ContactUs());
-                                      //           },
-                                      //           child: Image.asset(
-                                      //             "assets/images/faq.png",
-                                      //             fit: BoxFit.cover,
-                                      //             height: 40,
-                                      //           ),
-                                      //         ),
-                                      //         SizedBox(height: 12,),
-                                      //         const Text(
-                                      //           'More >',
-                                      //           style: TextStyle(
-                                      //               fontWeight:
-                                      //               FontWeight.bold,
-                                      //               fontFamily: "DMSans",
-                                      //               fontSize: 11,
-                                      //               color: primaryColor),
-                                      //           textAlign: TextAlign.center,
-                                      //         )
-                                      //       ],
-                                      //     ),
-                                      //   ],
-                                      // ),
-                                      // const SizedBox(
-                                      //   height: 20,
-                                      // ),
                                     ],
                                   ),),
+                                const AdvertSection(),
+                                const SizedBox(height: 20),
                                 Container(
                                   color: primaryColor,
                                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -590,8 +602,17 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                             children: [
                                               GestureDetector(
                                                 onTap: (){
-                                                  context.navigate(
-                                                      ContactUs(isSkyBlueTheme: widget.isSkyTheme,));
+                                                  Navigator.push(
+                                                    context,
+                                                    PageTransition(
+                                                      type: PageTransitionType.rightToLeftWithFade,
+                                                      duration: Duration(milliseconds: 500),
+                                                      child: ContactUs(isSkyBlueTheme: widget.isSkyTheme,),
+                                                    ),
+                                                  );
+
+                                                  // context.navigate(
+                                                  //     ContactUs(isSkyBlueTheme: widget.isSkyTheme,));
                                                 },
                                                 child: Image.asset(
                                                   "assets/images/faq.png",

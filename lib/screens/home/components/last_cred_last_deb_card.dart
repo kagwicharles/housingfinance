@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hfbbank/screens/home/components/extensions.dart';
 import 'package:hfbbank/screens/home/components/skeleton_loader.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../../theme/theme.dart';
 import 'lastCrDrLoader.dart';
@@ -137,9 +138,17 @@ class _LastCrDrCardState extends State<LastCrDrCard> {
                   ),
                   GestureDetector(
                     onTap: (){
-                      Navigator.of(context).push(
-                          MaterialPageRoute( builder: (context) => Ministatement(isSkyBlueTheme: widget.isSkyBlueTheme, accounts: bankAccounts,),)
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.rightToLeftWithFade,
+                          duration: Duration(milliseconds: 500),
+                          child: Ministatement(isSkyBlueTheme: widget.isSkyBlueTheme, accounts: bankAccounts,),
+                        ),
                       );
+                      // Navigator.of(context).push(
+                      //     MaterialPageRoute( builder: (context) => Ministatement(isSkyBlueTheme: widget.isSkyBlueTheme, accounts: bankAccounts,),)
+                      // );
                     },
                     child: Card(
                       margin: EdgeInsets.zero,

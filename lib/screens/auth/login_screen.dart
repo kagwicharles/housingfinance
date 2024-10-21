@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:craft_dynamic/craft_dynamic.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:hfbbank/screens/home/components/home_page.dart';
 import 'package:hfbbank/screens/home/home_screen.dart';
 import 'package:hfbbank/theme/theme.dart';
 import 'package:pinput/pinput.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../dashboard/dashboard_screen.dart';
 import '../settings/database_helper.dart';
@@ -421,12 +423,155 @@ class _LoginScreenState extends State<LoginScreen> {
           String imageString = images[0]["Image"];
           DatabaseHelper.instance.insertProfileImage(imageString);
         }
-        Get.offAll(() => ScreenHome(isSkyBlueTheme: widget.isSkyBlueTheme,));
+        // Get.offAll(() => ScreenHome(isSkyBlueTheme: widget.isSkyBlueTheme,));
+
+        Get.offAll(
+              () => ScreenHome(isSkyBlueTheme: widget.isSkyBlueTheme),
+          transition: Transition.downToUp,
+          duration: Duration(milliseconds: 700), // Customize duration
+        );
+
+
         // Navigator.of(context)
         //     .push(MaterialPageRoute(builder: (context) => const ScreenHome()));
-      } else {
+      } else if (value.status == '201'){
+        _showAlert("Important update available!", "To ensure a smooth experience, please update your app now.", "C");
+      }else if (value.status == '202'){
+        if  (value.imageUrl.toString() != "[]"){
+          // Parse the JSON string into a Dart object
+          List<dynamic> images = jsonDecode(value.imageUrl!);
+          // Extract the "Image" string from the first object in the array
+          String imageString = images[0]["Image"];
+          DatabaseHelper.instance.insertProfileImage(imageString);
+        }
+        _showAlert("New features are here!", "Update your App to explore our latest exciting features", "I");
+      }
+      else {
         AlertUtil.showAlertDialog(context, value.message!);
       }
     });
+  }
+
+  void _showAlert(String title, String message, String category){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          actionsPadding:
+          const EdgeInsets.only(bottom: 16, right: 14, left: 14),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 44),
+          titlePadding: EdgeInsets.zero,
+          contentPadding:
+          const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8.0))),
+          title: Container(
+            height: 100,
+            color: primaryColor,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                      fontFamily: "DMSans",
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 18
+                  ),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                const Icon(
+                  Icons.update,
+                  color: Colors.redAccent,
+                  size: 38,
+                )
+              ],
+            ),
+          ),
+          content: Container(
+            padding: EdgeInsets.only(top: 16, bottom: 16),
+            child: Text(
+              message,
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontFamily: "DMSans",
+                  fontSize: 14
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            category == "I" ?
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white, // Set the blue background color
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: primaryColor,
+                  ),
+                  borderRadius: BorderRadius.circular(12), // Adjust the curvature of the borders
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0), // Optional padding
+              ),
+              child: const Text(
+                "Maybe later",
+                style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: primaryColor,
+                    fontFamily: "DMSans",
+                    fontSize: 14),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Get.offAll(() => ScreenHome(isSkyBlueTheme: widget.isSkyBlueTheme,));
+                Get.offAll(
+                      () => ScreenHome(isSkyBlueTheme: widget.isSkyBlueTheme),
+                  transition: Transition.rightToLeftWithFade,
+                  duration: Duration(milliseconds: 500), // Customize duration
+                );
+
+              },
+            ):Container(),
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: APIService.appPrimaryColor, // Set the blue background color
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12), // Adjust the curvature of the borders
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0), // Optional padding
+              ),
+              child: const Text(
+                "Update Now",
+                style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                    fontFamily: "DMSans",
+                    fontSize: 14),
+              ),
+              onPressed: () {
+                if (Platform.isAndroid) {
+                  launchUrl(
+                      Uri.parse("https://play.google.com/store/apps/details?id=com.elmahousingfinanceug"),
+                      mode: LaunchMode.externalApplication,
+                      webViewConfiguration: const WebViewConfiguration(
+                        enableJavaScript: false,
+                      ));
+                } else if (Platform.isIOS) {
+                  launchUrl(
+                      Uri.parse("https://apps.apple.com/ug/app/housing-finance-bank-uganda/id1018758428"),
+                      mode: LaunchMode.externalApplication,
+                      webViewConfiguration: const WebViewConfiguration(
+                        enableJavaScript: false,
+                      ));
+                } // Allow back navigation
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

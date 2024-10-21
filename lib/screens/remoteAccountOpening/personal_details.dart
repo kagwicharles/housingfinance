@@ -720,6 +720,7 @@ class _PersonalDetailsState extends State<PersonalDetails> {
   Future<void> _showImageSourceDialog() async {
     showModalBottomSheet(
       context: context,
+      backgroundColor: primaryLightVariant,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(30),
@@ -733,16 +734,22 @@ class _PersonalDetailsState extends State<PersonalDetails> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('Take a picture'),
+                leading: const Icon(Icons.camera_enhance_outlined),
+                title: const Text('Take a picture',
+                style: TextStyle(
+                  fontFamily: "Manrope",
+                ),),
                 onTap: () {
                   Navigator.pop(context);
                   _getFromCamera();
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Choose from gallery'),
+                leading: const Icon(Icons.photo_library_outlined),
+                title: const Text('Choose from gallery',
+                style: TextStyle(
+                  fontFamily: "Manrope",
+                ),),
                 onTap: () {
                   Navigator.pop(context);
                   _getFromGallery();
