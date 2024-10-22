@@ -138,6 +138,7 @@ class _RaoOTPState extends State<RaoOTP> {
                                         }
                                       else
                                         {
+                                          _showAlert("Alert!", value.message.toString())
                                         },
                                       setState(() {
                                         isVerifying = false;
@@ -439,9 +440,10 @@ class _RaoOTPState extends State<RaoOTP> {
             ),
           ),
           content: Container(
-            padding: EdgeInsets.only(top: 12),
+            padding: EdgeInsets.only(top: 16, bottom: 16),
             child: Text(
               message,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                   color: Colors.black,
                   fontFamily: "DMSans",

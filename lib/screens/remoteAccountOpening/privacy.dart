@@ -74,7 +74,7 @@ class _TermsnConditionsState extends State<TermsnConditions> {
             initialOptions: InAppWebViewGroupOptions(
               crossPlatform: InAppWebViewOptions(
                 transparentBackground: true,
-                javaScriptEnabled: true,
+                javaScriptEnabled: false,
               ),
             ),
             onWebViewCreated: (controller) {

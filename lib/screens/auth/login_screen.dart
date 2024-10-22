@@ -27,6 +27,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final authRepository = AuthRepository();
   final _sharedPref= CommonSharedPref();
+  final _moduleRepository = ModuleRepository();
   bool _isLoading = false;
   Completer<void> dialogCompleter = Completer<void>();
   _biometricsLogin() {
@@ -430,10 +431,17 @@ class _LoginScreenState extends State<LoginScreen> {
           transition: Transition.downToUp,
           duration: Duration(milliseconds: 700), // Customize duration
         );
-
-
         // Navigator.of(context)
         //     .push(MaterialPageRoute(builder: (context) => const ScreenHome()));
+      }  else if (value.status == StatusCode.changePin.statusCode) {
+        _moduleRepository.getModuleById("PIN").then((module) {
+          CommonUtils.navigateToRoute(
+            context: context,
+            widget: DynamicWidget(
+              moduleItem: module,
+            ),
+          );
+        });
       } else if (value.status == '201'){
         _showAlert("Important update available!", "To ensure a smooth experience, please update your app now.", "C");
       }else if (value.status == '202'){
@@ -457,6 +465,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          actionsAlignment: MainAxisAlignment.spaceEvenly,
           actionsPadding:
           const EdgeInsets.only(bottom: 16, right: 14, left: 14),
           insetPadding: const EdgeInsets.symmetric(horizontal: 44),
@@ -496,6 +505,7 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: EdgeInsets.only(top: 16, bottom: 16),
             child: Text(
               message,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                   color: Colors.black,
                   fontFamily: "DMSans",

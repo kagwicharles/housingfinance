@@ -333,6 +333,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                   widget.customerData.termsUrl = getProductTermsUrlFromId(newValue)!;
                   isAccountSelected = true;
                   _savePreferences();
+                  print ("PRODUTIRL" + productUrl);
                 });
               },
               validator: (value) {

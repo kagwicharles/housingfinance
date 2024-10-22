@@ -4,6 +4,9 @@ import 'package:craft_dynamic/craft_dynamic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:hfbbank/screens/auth/login_screen.dart';
 import 'package:pinput/pinput.dart';
 
@@ -154,8 +157,13 @@ class _OTPScreenState extends State<OTPScreen> {
         .verifyOTP(mobileNumber: mobileNumber, otp: otp)
         .then((value) {
       if (value.status == StatusCode.success.statusCode) {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => LoginScreen(isSkyBlueTheme: widget.isSkyBlueTheme,)));
+        // Navigator.of(context)
+        //     .push(MaterialPageRoute(builder: (context) => LoginScreen(isSkyBlueTheme: widget.isSkyBlueTheme,)));
+        Get.offAll(
+              () => LoginScreen(isSkyBlueTheme: widget.isSkyBlueTheme),
+          transition: Transition.rightToLeftWithFade,
+          duration: Duration(milliseconds: 700), // Customize duration
+        );
       } else {
         AlertUtil.showAlertDialog(context, value.message!);
       }

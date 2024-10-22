@@ -9,6 +9,7 @@ import 'package:hfbbank/screens/dashboard/header_section.dart';
 import 'package:hfbbank/screens/dashboard/map_screen.dart';
 import 'package:hfbbank/screens/dashboard/menu_section.dart';
 import 'package:hfbbank/screens/home/components/advert_section.dart';
+import 'package:hfbbank/screens/home/components/success_view.dart';
 import 'package:hfbbank/theme/theme.dart';
 import 'package:hfbbank/util/utils.dart';
 import 'package:page_transition/page_transition.dart';
@@ -17,6 +18,7 @@ import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 import '../auth/activation_screen.dart';
 import '../auth/login_screen.dart';
 import '../remoteAccountOpening/rao_screen.dart';
+import '../remoteAccountOpening/success_display.dart';
 
 class DashBoardScreen extends StatefulWidget {
   final bool isSkyTheme;
@@ -49,7 +51,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   @override
   void initState() {
     //TODO: Comment out activation data before sharing
-    CommonSharedPref().addActivationData("256777026164", "1025714053");
+    // CommonSharedPref().addActivationData("256777026164", "1025714053");
     // CommonSharedPref().addActivationData("256700146817", "1794246760");
     // CommonSharedPref().addActivationData("254725166822", "1183220071");
     getName();
@@ -61,7 +63,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       // drawer: mainDrawer(context),
       body: SafeArea(
@@ -75,577 +76,624 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           ),
           Expanded(
               child: Container(
-                // color: primaryLight,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    color: widget.isSkyTheme ? primaryLightVariant : primaryLight,
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40))),
-                child: SingleChildScrollView(
-                  // padding: const EdgeInsets.all(24),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Padding(
-                            padding:
-                            const EdgeInsets.only(left: 20, top: 24),
-                            child: Text(
-                              Util.getGreeting(),
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: "DMSans",
-                                  color: Colors.grey[600]),
-                              softWrap: true,
-                            )),
-                        Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: Text(
-                              "${firstName ?? "Customer"}",
-                              style: const TextStyle(
-                                  fontSize: 24,
-                                  fontFamily: "DMSans",
-                                  fontWeight: FontWeight.bold),
-                            )),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        // WelcomeWidget(onProceedToLogin: () {  },),
-                        // Padding(
-                        //     padding:
-                        //     const EdgeInsets.only(left: 24, right: 24),
-                        //     child: MenuSection(
-                        //       isActive: isActive, isSkyTheme: widget.isSkyTheme,
-                        //
-                        //     )),
-                        Padding(padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Row(
-                              //   children: [
-                              //     Icon(Icons.account_circle, color: Colors.white, size: 40), // Profile-like icon
-                              //     const SizedBox(width: 12),
-                              //     Text(
-                              //       "Welcome Back!",
-                              //       style: TextStyle(
-                              //         fontSize: 24,
-                              //         fontFamily: "DMSans",
-                              //         fontWeight: FontWeight.bold,
-                              //         color: Colors.white,
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-                              Text(
-                                "Explore your banking needs with ease.",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
-                                  fontFamily: "DMSans",
-                                ),
-                                softWrap: true,
-                              ),
-                              const SizedBox(height: 16),
-                              Card(
-                                margin: EdgeInsets.zero,
-                                color: primaryColor,
-                                elevation: 4,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: InkWell(
-                                  onTap: (){
-                                    Navigator.push(
-                                      context,
-                                      PageTransition(
-                                        type: PageTransitionType.rightToLeftWithFade,
-                                        duration: Duration(milliseconds: 500),
-                                        child: LoginScreen(isSkyBlueTheme: widget.isSkyTheme,),
-                                      ),
-                                    );
-                                    isActive
-                                        ? Navigator.push(
-                                      context,
-                                      PageTransition(
-                                        type: PageTransitionType.rightToLeftWithFade,
-                                        duration: Duration(milliseconds: 500),
-                                        child: LoginScreen(isSkyBlueTheme: widget.isSkyTheme,),
-                                      ),
-                                    )
-                                    // Navigator.of(context).push(MaterialPageRoute(
-                                    //     builder: (context) => LoginScreen(isSkyBlueTheme: widget.isSkyTheme,)))
-                                        : Navigator.push(
-                                      context,
-                                      PageTransition(
-                                        type: PageTransitionType.rightToLeftWithFade,
-                                        duration: Duration(milliseconds: 500),
-                                        child: ActivationScreen(isSkyBlueTheme: widget.isSkyTheme,),
-                                      ),
-                                    );
-
-                                    // Navigator.of(context).push(MaterialPageRoute(
-                                    //     builder: (context) => ActivationScreen(isSkyBlueTheme: widget.isSkyTheme,)));
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          isActive ? "Proceed to Login" : "Proceed to App Activation",
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "DMSans",
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
+            // color: primaryLight,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                color: widget.isSkyTheme ? primaryLightVariant : primaryLight,
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40))),
+            child: SingleChildScrollView(
+              // padding: const EdgeInsets.all(24),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.only(left: 20, top: 24),
+                        child: Text(
+                          Util.getGreeting(),
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: "DMSans",
+                              color: Colors.grey[600]),
+                          softWrap: true,
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Text(
+                          "${firstName ?? "Customer"}",
+                          style: const TextStyle(
+                              fontSize: 24,
+                              fontFamily: "DMSans",
+                              fontWeight: FontWeight.bold),
+                        )),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    // WelcomeWidget(onProceedToLogin: () {  },),
+                    // Padding(
+                    //     padding:
+                    //     const EdgeInsets.only(left: 24, right: 24),
+                    //     child: MenuSection(
+                    //       isActive: isActive, isSkyTheme: widget.isSkyTheme,
+                    //
+                    //     )),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Row(
+                          //   children: [
+                          //     Icon(Icons.account_circle, color: Colors.white, size: 40), // Profile-like icon
+                          //     const SizedBox(width: 12),
+                          //     Text(
+                          //       "Welcome Back!",
+                          //       style: TextStyle(
+                          //         fontSize: 24,
+                          //         fontFamily: "DMSans",
+                          //         fontWeight: FontWeight.bold,
+                          //         color: Colors.white,
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                          Text(
+                            "Explore your banking needs with ease.",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                              fontFamily: "DMSans",
+                            ),
+                            softWrap: true,
+                          ),
+                          const SizedBox(height: 16),
+                          Card(
+                            margin: EdgeInsets.zero,
+                            color: primaryColor,
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                isActive
+                                    ? Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          type: PageTransitionType
+                                              .rightToLeftWithFade,
+                                          duration: Duration(milliseconds: 500),
+                                          child: LoginScreen(
+                                            isSkyBlueTheme: widget.isSkyTheme,
                                           ),
                                         ),
-                                        Icon(Icons.arrow_forward, color: Colors.white, size: 18,),
-                                      ],
+                                      )
+                                    : Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          type: PageTransitionType
+                                              .rightToLeftWithFade,
+                                          duration: Duration(milliseconds: 500),
+                                          child: ActivationScreen(
+                                            isSkyBlueTheme: widget.isSkyTheme,
+                                          ),
+                                        ),
+                                      );
+
+                                // Navigator.of(context).push(MaterialPageRoute(
+                                //     builder: (context) => ActivationScreen(isSkyBlueTheme: widget.isSkyTheme,)));
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 15),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      isActive
+                                          ? "Proceed to Login"
+                                          : "Proceed to App Activation",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: "DMSans",
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
+                                    Icon(
+                                      Icons.arrow_forward,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
+                                  Icon(
+                                    Icons.shield,
+                                    size: 16,
+                                    color: Colors.grey[600],
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "Banking made secure",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                      fontFamily: "DMSans",
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      color: secondaryAccent,
+                      height: 1,
+                    ),
+                    Container(
+                        color: widget.isSkyTheme
+                            ? primaryLight
+                            : primaryLightVariant,
+                        padding: EdgeInsets.zero,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            // const AdvertSection(),
+                            // const SizedBox(height: 16),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Bank With Us",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: "DMSans",
+                                        fontWeight: FontWeight.bold,
+                                        color: primaryColor),
+                                  ),
+                                  const SizedBox(height: 16),
                                   Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Icon(Icons.shield, size: 16, color: Colors.grey[600],),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        "Banking made secure",
-                                        style: TextStyle(fontSize: 12, color: Colors.grey[600],fontFamily: "DMSans",),
+                                      Column(
+                                        children: [
+                                          TopDashItem(
+                                              ontap: () {
+                                                Get.to(() => RAOScreen(
+                                                      isSkyBlueTheme:
+                                                          widget.isSkyTheme,
+                                                    ));
+                                              },
+                                              image: "assets/images/accop.png",
+                                              color: Colors.white),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          const Text(
+                                            'Open Account',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "DMSans",
+                                                fontSize: 11,
+                                                color: primaryColor),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          TopDashItem(
+                                              image: "assets/images/calc.png",
+                                              ontap: () {
+                                                Fluttertoast.showToast(
+                                                  msg: "Coming Soon",
+                                                  toastLength:
+                                                      Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity
+                                                      .BOTTOM, // You can change the position
+                                                  timeInSecForIosWeb: 1,
+                                                  backgroundColor: Colors.black,
+                                                  textColor: Colors.white,
+                                                  fontSize: 14.0,
+                                                );
+                                              },
+                                              color: Colors.white),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          const Text(
+                                            'Loan Calculator',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "DMSans",
+                                                fontSize: 11,
+                                                color: primaryColor),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          TopDashItem(
+                                              // title: "Mobile Banking",
+                                              image: "assets/images/pLoans.png",
+                                              ontap: () {
+                                                Fluttertoast.showToast(
+                                                  msg: "Coming Soon",
+                                                  toastLength:
+                                                      Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity
+                                                      .BOTTOM, // You can change the position
+                                                  timeInSecForIosWeb: 1,
+                                                  backgroundColor: Colors.black,
+                                                  textColor: Colors.white,
+                                                  fontSize: 14.0,
+                                                );
+                                              },
+                                              color: Colors.white),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          const Text(
+                                            'Personal Loans',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "DMSans",
+                                                fontSize: 11,
+                                                color: primaryColor),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              Fluttertoast.showToast(
+                                                msg: "Coming Soon",
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity
+                                                    .BOTTOM, // You can change the position
+                                                timeInSecForIosWeb: 1,
+                                                backgroundColor: Colors.black,
+                                                textColor: Colors.white,
+                                                fontSize: 14.0,
+                                              );
+                                            },
+                                            child: TopDashItem(
+                                                image:
+                                                    "assets/images/treasury.png",
+                                                color: Colors.white),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          const Text(
+                                            'Treasury Bonds',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "DMSans",
+                                                fontSize: 11,
+                                                color: primaryColor),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              Fluttertoast.showToast(
+                                                msg: "Coming Soon",
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity
+                                                    .BOTTOM, // You can change the position
+                                                timeInSecForIosWeb: 1,
+                                                backgroundColor: Colors.black,
+                                                textColor: Colors.white,
+                                                fontSize: 14.0,
+                                              );
+                                            },
+                                            child: TopDashItem(
+                                                image:
+                                                    "assets/images/bills.png",
+                                                color: Colors.white),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          const Text(
+                                            'Treasury Bills',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "DMSans",
+                                                fontSize: 11,
+                                                color: primaryColor),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              Fluttertoast.showToast(
+                                                msg: "Coming Soon",
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity
+                                                    .BOTTOM, // You can change the position
+                                                timeInSecForIosWeb: 1,
+                                                backgroundColor: Colors.black,
+                                                textColor: Colors.white,
+                                                fontSize: 14.0,
+                                              );
+                                            },
+                                            child: TopDashItem(
+                                                // title: "Mobile Banking",
+                                                image:
+                                                    "assets/images/homeL.png",
+                                                ontap: () {
+                                                  Fluttertoast.showToast(
+                                                    msg: "Coming Soon",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity: ToastGravity
+                                                        .BOTTOM, // You can change the position
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor:
+                                                        Colors.black,
+                                                    textColor: Colors.white,
+                                                    fontSize: 14.0,
+                                                  );
+                                                },
+                                                color: Colors.white),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          const Text(
+                                            'Home Loans',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "DMSans",
+                                                fontSize: 11,
+                                                color: primaryColor),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 32,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const AdvertSection(),
+                            const SizedBox(height: 20),
+                            Container(
+                              color: primaryColor,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Contact Us",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: "DMSans",
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white),
+                                  ),
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              launchWhatsAppUri("+256771888755",
+                                                  "Hi, I need help");
+                                            },
+                                            child: Image.asset(
+                                              "assets/images/ont1.png",
+                                              fit: BoxFit.cover,
+                                              height: 40,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          const Text(
+                                            'Chat',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "DMSans",
+                                                fontSize: 11,
+                                                color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              _launchPhoneCaller('0800211082');
+                                            },
+                                            child: Image.asset(
+                                              "assets/images/ont2.png",
+                                              fit: BoxFit.cover,
+                                              height: 40,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          const Text(
+                                            'Call',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "DMSans",
+                                                fontSize: 11,
+                                                color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              _launchEmail(
+                                                  'info@housingfinance.co.ug');
+                                            },
+                                            child: Image.asset(
+                                              "assets/images/mail.png",
+                                              fit: BoxFit.cover,
+                                              height: 40,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          const Text(
+                                            'E-mail',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "DMSans",
+                                                fontSize: 11,
+                                                color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTapDown:
+                                                (TapDownDetails details) {
+                                              _showPopupMenu(context,
+                                                  details.globalPosition);
+                                            },
+                                            // onTap: (){
+                                            //   context.navigate(
+                                            //       Locations());
+                                            // },
+                                            child: Image.asset(
+                                              "assets/images/locat.png",
+                                              fit: BoxFit.cover,
+                                              height: 40,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          const Text(
+                                            'Locations',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "DMSans",
+                                                fontSize: 11,
+                                                color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                PageTransition(
+                                                  type: PageTransitionType
+                                                      .rightToLeftWithFade,
+                                                  duration: Duration(
+                                                      milliseconds: 500),
+                                                  child: ContactUs(
+                                                    isSkyBlueTheme:
+                                                        widget.isSkyTheme,
+                                                  ),
+                                                ),
+                                              );
+
+                                              // context.navigate(
+                                              //     ContactUs(isSkyBlueTheme: widget.isSkyTheme,));
+                                            },
+                                            child: Image.asset(
+                                              "assets/images/faq.png",
+                                              fit: BoxFit.cover,
+                                              height: 40,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          const Text(
+                                            'More >',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: "DMSans",
+                                                fontSize: 11,
+                                                color: Colors.white),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        ],
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
-                            ],
-                          ),),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          color: secondaryAccent,
-                          height: 1,
-                        ),
-                        Container(
-                            color: widget.isSkyTheme ? primaryLight : primaryLightVariant,
-                            padding: EdgeInsets.zero,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                // const AdvertSection(),
-                                // const SizedBox(height: 16),
-                                Padding(padding: EdgeInsets.symmetric(horizontal: 24),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Bank With Us",
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "DMSans",
-                                            fontWeight: FontWeight.bold,
-                                            color: primaryColor),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              TopDashItem(
-                                                  ontap: () {
-                                                    Get.to(() => RAOScreen(isSkyBlueTheme: widget.isSkyTheme,));
-                                                  },
-                                                  image:
-                                                  "assets/images/accop.png",
-                                                  color: Colors.white),
-                                              SizedBox(height: 12,),
-                                              const Text(
-                                                'Open Account',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontFamily: "DMSans",
-                                                    fontSize: 11,
-                                                    color: primaryColor),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              TopDashItem(
-                                                  image:
-                                                  "assets/images/calc.png",
-                                                  ontap: (){
-                                                    Fluttertoast.showToast(
-                                                      msg: "Coming Soon",
-                                                      toastLength: Toast.LENGTH_SHORT,
-                                                      gravity: ToastGravity.BOTTOM, // You can change the position
-                                                      timeInSecForIosWeb: 1,
-                                                      backgroundColor: Colors.black,
-                                                      textColor: Colors.white,
-                                                      fontSize: 14.0,
-                                                    );
-                                                  },
-                                                  color: Colors.white),
-                                              SizedBox(height: 12,),
-                                              const Text(
-                                                'Loan Calculator',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontFamily: "DMSans",
-                                                    fontSize: 11,
-                                                    color: primaryColor),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              TopDashItem(
-                                                // title: "Mobile Banking",
-                                                  image:
-                                                  "assets/images/pLoans.png",
-                                                  ontap: () {
-                                                    Fluttertoast.showToast(
-                                                      msg: "Coming Soon",
-                                                      toastLength: Toast.LENGTH_SHORT,
-                                                      gravity: ToastGravity.BOTTOM, // You can change the position
-                                                      timeInSecForIosWeb: 1,
-                                                      backgroundColor: Colors.black,
-                                                      textColor: Colors.white,
-                                                      fontSize: 14.0,
-                                                    );
-                                                  },
-                                                  color: Colors.white),
-                                              SizedBox(height: 12,),
-                                              const Text(
-                                                'Personal Loans',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontFamily: "DMSans",
-                                                    fontSize: 11,
-                                                    color: primaryColor),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 16,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: (){
-                                                  Fluttertoast.showToast(
-                                                    msg: "Coming Soon",
-                                                    toastLength: Toast.LENGTH_SHORT,
-                                                    gravity: ToastGravity.BOTTOM, // You can change the position
-                                                    timeInSecForIosWeb: 1,
-                                                    backgroundColor: Colors.black,
-                                                    textColor: Colors.white,
-                                                    fontSize: 14.0,
-                                                  );
-                                                },
-                                                child: TopDashItem(
-                                                    image:
-                                                    "assets/images/treasury.png",
-                                                    color: Colors.white),
-                                              ),
-                                              SizedBox(height: 12,),
-                                              const Text(
-                                                'Treasury Bonds',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontFamily: "DMSans",
-                                                    fontSize: 11,
-                                                    color: primaryColor),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: (){
-                                                  Fluttertoast.showToast(
-                                                    msg: "Coming Soon",
-                                                    toastLength: Toast.LENGTH_SHORT,
-                                                    gravity: ToastGravity.BOTTOM, // You can change the position
-                                                    timeInSecForIosWeb: 1,
-                                                    backgroundColor: Colors.black,
-                                                    textColor: Colors.white,
-                                                    fontSize: 14.0,
-                                                  );
-                                                },
-                                                child: TopDashItem(
-                                                    image:
-                                                    "assets/images/bills.png",
-                                                    color: Colors.white),
-                                              ),
-                                              SizedBox(height: 12,),
-                                              const Text(
-                                                'Treasury Bills',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontFamily: "DMSans",
-                                                    fontSize: 11,
-                                                    color: primaryColor),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: (){
-                                                  Fluttertoast.showToast(
-                                                    msg: "Coming Soon",
-                                                    toastLength: Toast.LENGTH_SHORT,
-                                                    gravity: ToastGravity.BOTTOM, // You can change the position
-                                                    timeInSecForIosWeb: 1,
-                                                    backgroundColor: Colors.black,
-                                                    textColor: Colors.white,
-                                                    fontSize: 14.0,
-                                                  );
-                                                },child: TopDashItem(
-                                                // title: "Mobile Banking",
-                                                  image:
-                                                  "assets/images/homeL.png",
-                                                  ontap: () {
-                                                    Fluttertoast.showToast(
-                                                      msg: "Coming Soon",
-                                                      toastLength: Toast.LENGTH_SHORT,
-                                                      gravity: ToastGravity.BOTTOM, // You can change the position
-                                                      timeInSecForIosWeb: 1,
-                                                      backgroundColor: Colors.black,
-                                                      textColor: Colors.white,
-                                                      fontSize: 14.0,
-                                                    );
-                                                  },
-                                                  color: Colors.white),
-                                              ),
-                                              SizedBox(height: 12,),
-                                              const Text(
-                                                'Home Loans',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontFamily: "DMSans",
-                                                    fontSize: 11,
-                                                    color: primaryColor),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 32,
-                                      ),
-                                    ],
-                                  ),),
-                                const AdvertSection(),
-                                const SizedBox(height: 20),
-                                Container(
-                                  color: primaryColor,
-                                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        "Contact Us",
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: "DMSans",
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white),
-                                      ),
-                                      const SizedBox(
-                                        height: 16,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: (){
-                                                  launchWhatsAppUri(
-                                                      "+256771888755",
-                                                      "Hi, I need help");
-                                                },
-                                                child: Image.asset(
-                                                  "assets/images/ont1.png",
-                                                  fit: BoxFit.cover,
-                                                  height: 40,
-                                                ),
-                                              ),
-                                              SizedBox(height: 12,),
-                                              const Text(
-                                                'Chat',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontFamily: "DMSans",
-                                                    fontSize: 11,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: (){
-                                                  _launchPhoneCaller(
-                                                      '0800211082');
-                                                },
-                                                child: Image.asset(
-                                                  "assets/images/ont2.png",
-                                                  fit: BoxFit.cover,
-                                                  height: 40,
-                                                ),
-                                              ),
-                                              SizedBox(height: 12,),
-                                              const Text(
-                                                'Call',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontFamily: "DMSans",
-                                                    fontSize: 11,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: (){
-                                                  _launchEmail('info@housingfinance.co.ug');
-                                                },
-                                                child: Image.asset(
-                                                  "assets/images/mail.png",
-                                                  fit: BoxFit.cover,
-                                                  height: 40,
-                                                ),
-                                              ),
-                                              SizedBox(height: 12,),
-                                              const Text(
-                                                'E-mail',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontFamily: "DMSans",
-                                                    fontSize: 11,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTapDown: (TapDownDetails details) {
-                                                  _showPopupMenu(context, details.globalPosition);
-                                                },
-                                                // onTap: (){
-                                                //   context.navigate(
-                                                //       Locations());
-                                                // },
-                                                child: Image.asset(
-                                                  "assets/images/locat.png",
-                                                  fit: BoxFit.cover,
-                                                  height: 40,
-                                                ),
-                                              ),
-                                              SizedBox(height: 12,),
-                                              const Text(
-                                                'Locations',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontFamily: "DMSans",
-                                                    fontSize: 11,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: (){
-                                                  Navigator.push(
-                                                    context,
-                                                    PageTransition(
-                                                      type: PageTransitionType.rightToLeftWithFade,
-                                                      duration: Duration(milliseconds: 500),
-                                                      child: ContactUs(isSkyBlueTheme: widget.isSkyTheme,),
-                                                    ),
-                                                  );
+                            ),
+                          ],
+                        )),
 
-                                                  // context.navigate(
-                                                  //     ContactUs(isSkyBlueTheme: widget.isSkyTheme,));
-                                                },
-                                                child: Image.asset(
-                                                  "assets/images/faq.png",
-                                                  fit: BoxFit.cover,
-                                                  height: 40,
-                                                ),
-                                              ),
-                                              SizedBox(height: 12,),
-                                              const Text(
-                                                'More >',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontFamily: "DMSans",
-                                                    fontSize: 11,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.center,
-                                              )
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )),
-
-                        // const TabSection(),
-                        // const ContactSection()
-                      ]),
-                ),
-              ))
+                    // const TabSection(),
+                    // const ContactSection()
+                  ]),
+            ),
+          ))
         ]),
       ),
       backgroundColor: Theme.of(context).primaryColor,
@@ -667,7 +715,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 height: 20,
                 color: primaryColor,
               ),
-              SizedBox(width: 8,),
+              SizedBox(
+                width: 8,
+              ),
               Text('Agent Locations',
                   style: TextStyle(
                       color: primaryColor,
@@ -687,7 +737,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 height: 20,
                 color: primaryColor,
               ),
-              SizedBox(width: 8,),
+              SizedBox(
+                width: 8,
+              ),
               Text('Branch Locations',
                   style: TextStyle(
                       color: primaryColor,
@@ -707,7 +759,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 height: 20,
                 color: primaryColor,
               ),
-              SizedBox(width: 8,),
+              SizedBox(
+                width: 8,
+              ),
               Text('ATM Locations',
                   style: TextStyle(
                       color: primaryColor,
